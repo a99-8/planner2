@@ -1,7 +1,8 @@
 "use client";
 
 import { useCSVHandler } from "@/hooks/useCSVHandler";
-import { SettlementsPopover } from "@/components/settlementsPopover";
+import { SettlementsPopover } from "@/components/element/settlementsTabler";
+import { ComparisonTable } from "@/components/element/comparisonTable";
 
 export default function ComparisonPage() {
   const { data, fileName, isMounted } = useCSVHandler("main_dashboard");
@@ -26,6 +27,8 @@ export default function ComparisonPage() {
           <div className="flex justify-center w-full">
             <SettlementsPopover data={data} />
           </div>
+
+          <ComparisonTable data={data} />
         </div>
       ) : (
         <p className="text-red-500">لم يتم رفع أي ملف في الصفحة الرئيسية!</p>

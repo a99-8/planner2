@@ -1,8 +1,14 @@
+"use client";
+
+import { useCSVHandler } from "@/hooks/useCSVHandler";
+import { SettlementsTables } from "@/components/element/matrixTables";
+
 export default function MatrixPage() {
-  return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">part 3: Matrix</h1>
-      <p>adding tables later.</p>
-    </div>
-  );
+  const { data, isMounted } = useCSVHandler("main_dashboard");
+
+  if (!isMounted) {
+    return <div className="p-6">جاري مزامنة البيانات...</div>;
+  }
+
+  return <SettlementsTables data={data} />;
 }

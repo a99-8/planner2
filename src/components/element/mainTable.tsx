@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 
 interface CSVTableProps {
-data: CSVRow[];
+  data: CSVRow[];
 }
 
 export function MainTable({ data }: CSVTableProps) {
@@ -24,12 +24,14 @@ export function MainTable({ data }: CSVTableProps) {
   const headers = Object.keys(data[0]);
 
   return (
-    <div className="border rounded-md overflow-x-auto">
-      <Table>
+    <div className="border rounded-md overflow-x-auto w-fit">
+      <Table dir="rtl">
         <TableHeader>
           <TableRow>
             {headers.map((header) => (
-              <TableHead key={header}>{header}</TableHead>
+              <TableHead className="w-[100px] text-center" key={header}>
+                {header}
+              </TableHead>
             ))}
           </TableRow>
         </TableHeader>
@@ -37,7 +39,9 @@ export function MainTable({ data }: CSVTableProps) {
           {data.map((row, index) => (
             <TableRow key={index}>
               {Object.values(row).map((value, i) => (
-                <TableCell key={i}>{value}</TableCell>
+                <TableCell className="w-[100px] text-center" key={i}>
+                  {value}
+                </TableCell>
               ))}
             </TableRow>
           ))}

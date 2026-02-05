@@ -4,48 +4,65 @@ import { parseCSV } from "@/logic/csvParser";
 import { type CSVRow } from "@/types/csvRow";
 
 export const useCSVHandler = (key: string) => {
-  const [data, setData] = useState<CSVRow[]>([]);
-  const [fileName, setFileName] = useState<string>("No file chosen");
+  // Start Defining variables //
+  const [state, setState] = useState({
+    data: [] as CSVRow[],
+    fileName: "No file chosen",
+  });
   const [isMounted, setIsMounted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // end Defining variables //
 
-  // عند التحميل: اطلب من الـ Storage استرجاع البيانات
+  // uploda data for the frist time
   useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      const savedData = storage.get(key);
-      const savedName = storage.get(`${key}_name`);
+    const loadData = async () => {
+      // uploda data from the web browser
+      const savedData = (await storage.get(key)) || [];
+      const savedName = (await storage.get(`${key}_name`)) || "No file chosen";
 
-      if (Array.isArray(savedData)) setData(savedData);
-      if (savedName) setFileName(savedName);
+      // updata data + state from the web browser
+      setState({ data: savedData, fileName: savedName });
       setIsMounted(true);
-    });
-    return () => cancelAnimationFrame(frame);
+    };
+
+    loadData();
   }, [key]);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
+    // pack up file
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // 1. معالجة الملف (Parser Logic)
-    const result = await parseCSV(file);
+    try {
+      // read and storage data
+      const { data, name } = await parseCSV(file);
+      await storage.save(key, data);
+      await storage.save(`${key}_name`, name);
+      // updata the state of data
+      setState({ data, fileName: name });
+    } catch (error) {
+      console.error("Error parsing/saving CSV:", error);
+    }
+  };
 
-    // 2. حفظ النتائج (Storage Logic)
-    storage.save(key, result.data);
-    storage.save(`${key}_name`, result.name);
+  const clearData = async () => {
+    await storage.remove(key);
+    await storage.remove(`${key}_name`);
 
-    // 3. تحديث الواجهة
-    setData(result.data);
-    setFileName(result.name);
+    setState({
+      data: [],
+      fileName: "No file chosen",
+    });
   };
 
   return {
-    data,
-    fileName,
+    ...state,
     fileInputRef,
     handleFileChange,
     openFilePicker: () => fileInputRef.current?.click(),
+    clearData,
     isMounted,
   };
 };

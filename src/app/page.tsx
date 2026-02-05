@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { MainTable } from "@/components/mainTable";
+import { MainTable } from "@/components/element/mainTable";
 import { useCSVHandler } from "@/hooks/useCSVHandler";
+import { Trash2 } from "lucide-react";
 
 export default function Home() {
   const {
@@ -12,6 +13,7 @@ export default function Home() {
     fileInputRef,
     handleFileChange,
     openFilePicker,
+    clearData,
     isMounted,
   } = useCSVHandler("main_dashboard");
 
@@ -36,6 +38,14 @@ export default function Home() {
           {fileName}
         </Label>
       </div>
+
+      {/* زر الحذف - يظهر فقط إذا كان هناك بيانات */}
+      {data.length > 0 && (
+        <Button variant="destructive" onClick={clearData} className="gap-2">
+          <Trash2 size={16} />
+          Clear Data
+        </Button>
+      )}
 
       <MainTable data={data} />
     </div>

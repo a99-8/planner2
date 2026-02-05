@@ -1,35 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { storage } from "@/logic/storageHandler";
 
 export const useSettlements = (key: string) => {
-  const [state, setState] = useState({
-    lastFileKey: key,
-    columns:
-      typeof window !== "undefined"
-        ? storage.get(`${key}_selected_cols`) || []
-        : [],
-  });
+  const [columns, setColumns] = useState<string[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  if (state.lastFileKey !== key) {
-    const saved =
-      typeof window !== "undefined"
-        ? storage.get(`${key}_selected_cols`) || []
-        : [];
-    setState({
-      lastFileKey: key,
-      columns: saved,
-    });
-  }
+  // uploda data for the frist time
+  useEffect(() => {
+    const loadSavedColumns = async () => {
+      const saved = await storage.get(`${key}_selected_cols`);
+      if (saved) {
+        setColumns(saved);
+      }
+      setIsLoaded(true);
+    };
+    loadSavedColumns();
+  }, [key]);
 
-  // when changeing save the new columns
-  const toggleColumn = (columnName: string) => {
-    const newSelection = state.columns.includes(columnName)
-      ? state.columns.filter((col: string) => col !== columnName)
-      : [...state.columns, columnName];
+  // listener so the comparison table updata
+  useEffect(() => {
+    const handleStorageUpdate = async () => {
+      const updatedData = await storage.get(`${key}_selected_cols`);
+      setColumns(updatedData || []);
+    };
 
-    setState({ ...state, columns: newSelection });
-    storage.save(`${key}_selected_cols`, newSelection);
+    window.addEventListener("settlements_updated", handleStorageUpdate);
+    return () => {
+      window.removeEventListener("settlements_updated", handleStorageUpdate);
+    };
+  }, [key]);
+
+  // updata data when click on the cheak box
+  const toggleColumn = async (columnName: string) => {
+    const newSelection = columns.includes(columnName)
+      ? columns.filter((col) => col !== columnName)
+      : [...columns, columnName];
+
+    setColumns(newSelection);
+
+    // save data in storage
+    await storage.save(`${key}_selected_cols`, newSelection);
+
+    // make the other com notice
+    window.dispatchEvent(new Event("settlements_updated"));
   };
 
-  return { selectedColumns: state.columns, toggleColumn };
+  return {
+    selectedColumns: columns,
+    isLoaded,
+    toggleColumn,
+  };
 };
