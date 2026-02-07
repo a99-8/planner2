@@ -17,7 +17,7 @@ import {
 
 import { useSettlements } from "@/hooks/useSettlements";
 import { type CSVRow } from "@/types/csvRow";
-import { useMatrix } from "@/hooks/usematrix";
+import { useMatrix } from "@/hooks/useMatrix";
 import { useComparison } from "@/hooks/useComparison";
 import { SmartCell } from "../other/smartCell";
 

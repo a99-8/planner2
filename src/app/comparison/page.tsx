@@ -1,7 +1,7 @@
 "use client";
 
 import { useCSVHandler } from "@/hooks/useCSVHandler";
-import { SettlementsPopover } from "@/components/element/settlementsTabler";
+import { SettlementsPopover } from "@/components/element/settlementsTable";
 import { ComparisonTable } from "@/components/element/comparisonTable";
 import { NoData } from "@/components/other/noData";
 

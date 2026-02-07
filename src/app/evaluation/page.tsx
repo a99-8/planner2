@@ -1,8 +1,17 @@
+"use client";
+
+import { useCSVHandler } from "@/hooks/useCSVHandler";
+import { NoData } from "@/components/other/noData";
+import { FinalSummaryTable } from "@/components/element/evaluationTable";
+
 export default function EvaluationPage() {
-  return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">part 4: Evaluation</h1>
-      <p>adding tables later.</p>
-    </div>
-  );
+  const { data, isMounted } = useCSVHandler("main_dashboard");
+
+  if (!isMounted) {
+    return <div className="p-6">جاري مزامنة البيانات...</div>;
+  }
+
+  if (data.length === 0) return <NoData />;
+
+  return <FinalSummaryTable data={data} />;
 }
