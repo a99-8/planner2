@@ -3,6 +3,7 @@
 import { useCSVHandler } from "@/hooks/useCSVHandler";
 import { SettlementsPopover } from "@/components/element/settlementsTabler";
 import { ComparisonTable } from "@/components/element/comparisonTable";
+import { NoData } from "@/components/other/noData";
 
 export default function ComparisonPage() {
   const { data, fileName, isMounted } = useCSVHandler("main_dashboard");
@@ -10,6 +11,8 @@ export default function ComparisonPage() {
   if (!isMounted) {
     return <div className="p-6">جاري مزامنة البيانات...</div>;
   }
+
+  if (data.length === 0) return <NoData />;
 
   return (
     <div className="p-6 space-y-6">

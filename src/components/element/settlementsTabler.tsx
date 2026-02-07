@@ -15,6 +15,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { useSettlements } from "@/hooks/useSettlements";
+import { NoData } from "../other/noData";
 
 interface CSVTableProps {
   data: CSVRow[];
@@ -22,15 +23,8 @@ interface CSVTableProps {
 
 export function SettlementsPopover({ data }: CSVTableProps) {
   const { selectedColumns, toggleColumn } = useSettlements("page_settlements");
-  if (data.length === 0) {
-    return (
-      <div className="text-center py-10 border rounded-md text-muted-foreground">
-        There is no data to display.
-      </div>
-    );
-  }
 
-  if (data.length === 0) return <div>No data...</div>;
+  if (data.length === 0) return <NoData />;
 
   const columnNames = Object.keys(data[0]);
   return (

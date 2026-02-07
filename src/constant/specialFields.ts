@@ -1,6 +1,4 @@
-export const staticHeaders = [
-  "رقم المقارنة",
-  "سعر المتر",
+export const specialFields = [
   "نوع المقارنة",
   "التاريخ",
   "الرقم المرجعي",

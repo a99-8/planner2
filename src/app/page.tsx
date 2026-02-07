@@ -37,15 +37,14 @@ export default function Home() {
         <Label className="bg-muted p-2 rounded border border-border">
           {fileName}
         </Label>
-      </div>
 
-      {/* زر الحذف - يظهر فقط إذا كان هناك بيانات */}
-      {data.length > 0 && (
-        <Button variant="destructive" onClick={clearData} className="gap-2">
-          <Trash2 size={16} />
-          Clear Data
-        </Button>
-      )}
+        {data.length > 0 && (
+          <Button variant="destructive" onClick={clearData} className="gap-2">
+            <Trash2 size={16} />
+            Clear Data
+          </Button>
+        )}
+      </div>
 
       <MainTable data={data} />
     </div>

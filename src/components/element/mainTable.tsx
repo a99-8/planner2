@@ -7,19 +7,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { NoData } from "../other/noData";
 
 interface CSVTableProps {
   data: CSVRow[];
 }
 
 export function MainTable({ data }: CSVTableProps) {
-  if (data.length === 0) {
-    return (
-      <div className="text-center py-10 border rounded-md text-muted-foreground">
-        لا توجد بيانات لعرضها.
-      </div>
-    );
-  }
+  if (data.length === 0) return <NoData />;
 
   const headers = Object.keys(data[0]);
 
