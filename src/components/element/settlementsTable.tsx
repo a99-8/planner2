@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { useSettlements } from "@/hooks/useSettlements";
+import { useSettlements } from "@/hooks/other/useSettlements";
 import { NoData } from "../other/noData";
 
 interface CSVTableProps {

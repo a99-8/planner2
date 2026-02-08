@@ -20,27 +20,35 @@ const openDB = (): Promise<IDBDatabase> => {
 };
 
 export const storage = {
-  save: async (key: string, data: any) => {
-    const db = await openDB(); //contact whit database
-    const tx = db.transaction(STORE_NAME, "readwrite"); //Select the process
-    tx.objectStore(STORE_NAME).put(data, key); // insert the data
-    return tx.oncomplete; // wait until complete the process finish
+  save: async (key: string, data: any): Promise<void> => {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, "readwrite");
+      tx.objectStore(STORE_NAME).put(data, key);
+
+      tx.oncomplete = () => resolve(); // العملية نجحت
+      tx.onerror = () => reject(tx.error); // العملية فشلت
+    });
   },
 
   get: async (key: string): Promise<any> => {
     const db = await openDB();
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, "readonly");
-      const request = tx.objectStore(STORE_NAME).get(key); // geting the data
-      request.onsuccess = () => resolve(request.result || null); // return the data or null
+      const request = tx.objectStore(STORE_NAME).get(key);
+      request.onsuccess = () => resolve(request.result || null);
       request.onerror = () => reject(request.error);
     });
   },
 
-  remove: async (key: string) => {
+  remove: async (key: string): Promise<void> => {
     const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    tx.objectStore(STORE_NAME).delete(key);
-    return tx.oncomplete;
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, "readwrite");
+      tx.objectStore(STORE_NAME).delete(key);
+
+      tx.oncomplete = () => resolve(); // الآن أصبحت تعود بـ Promise<void> حقيقي
+      tx.onerror = () => reject(tx.error);
+    });
   },
 };

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Trash2, Plus, ArrowUpDown } from "lucide-react";
-import { useSettlements } from "@/hooks/useSettlements";
+import { useSettlements } from "@/hooks/other/useSettlements";
 import { useComparison } from "@/hooks/useComparison";
 import { prossHeaders } from "@/logic/settlementsHeaders";
 import { NoData } from "../other/noData";

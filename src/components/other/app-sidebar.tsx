@@ -1,4 +1,4 @@
-import { Calculator, Home, Compass, Flag } from "lucide-react";
+import { Calculator, Home, Compass, Flag, SquareLibrary } from "lucide-react";
 
 import {
   Sidebar,
@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 
-// Menu items.
 const items = [
   {
     title: "Home",
@@ -20,19 +19,24 @@ const items = [
     icon: Home,
   },
   {
-    title: "comparison",
+    title: "Comparison",
     url: "/comparison",
     icon: Compass,
   },
   {
-    title: "matrix",
+    title: "Matrix",
     url: "/matrix",
     icon: Calculator,
   },
   {
-    title: "evaluation",
+    title: "Evaluation",
     url: "/evaluation",
     icon: Flag,
+  },
+  {
+    title: "SessionsManger",
+    url: "/sessionsManger",
+    icon: SquareLibrary,
   },
 ];
 

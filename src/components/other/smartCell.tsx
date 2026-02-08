@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { TableCell } from "@/components/ui/table";
 import { InputSelector } from "./inputSelector";
-import { useSmartCell } from "@/hooks/useSmartCell";
+import { useSmartCell } from "@/hooks/other/useSmartCell";
 import { specialFields } from "@/constant/specialFields";
 
 interface SmartCellProps {

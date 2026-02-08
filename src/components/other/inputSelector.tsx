@@ -64,6 +64,8 @@ export function InputSelector({
 
     case "التاريخ":
       const dateValue = value ? new Date(value) : undefined;
+      const isValidDate =
+        dateValue instanceof Date && !isNaN(dateValue.getTime());
       return (
         <Popover>
           <PopoverTrigger asChild>
@@ -75,7 +77,7 @@ export function InputSelector({
               )}
             >
               <span className="truncate text-xs">
-                {dateValue ? format(dateValue, "yyyy/MM/dd") : "اختر تاريخ"}
+                {isValidDate ? format(dateValue, "yyyy/MM/dd") : "اختر تاريخ"}
               </span>
               <ChevronDownIcon className="h-3 w-3 opacity-50" />
             </Button>

@@ -9,59 +9,85 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { RefreshCw, Calculator, Database } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Database, Scale, Loader2 } from "lucide-react";
 import { useEvaluation } from "@/hooks/useEvaluation";
 import { type CSVRow } from "@/types/csvRow";
 import { ExportToExcel } from "@/components/other/ExportToExcel";
-import { useSettlements } from "@/hooks/useSettlements";
+import { useSettlements } from "@/hooks/other/useSettlements";
 import { useComparison } from "@/hooks/useComparison";
+import { finalHead } from "@/constant/finalHead";
 
 export function FinalSummaryTable({ data }: { data: CSVRow[] }) {
-  // استخدام الهوك المخصص الذي قمنا بإنشائه سابقاً
   const { selectedColumns } = useSettlements("page_settlements");
   const { rowIds } = useComparison("page_settlements");
-  const { snapshot, loading, handleManualUpdate, rowWeights, updateWeight } =
-    useEvaluation("page_settlements");
+
+  // استخدام الهوك مع تمرير البيانات (data) للتحديث التلقائي
+  const {
+    snapshot,
+    loading,
+    rowWeights,
+    updateWeight,
+    isUniformWeight,
+    setIsUniformWeight,
+    uniformWeights,
+    updateUniformWeight,
+  } = useEvaluation("page_settlements", data);
 
   return (
     <div
       className="w-full space-y-4 overflow-hidden border rounded-xl p-4 bg-card shadow-md"
       dir="rtl"
     >
+      {/* Header Section */}
       <div className="flex justify-between items-center border-b pb-4">
-        <h3 className="text-xl font-bold flex items-center gap-2 text-primary">
-          <Database className="w-5 h-5" />
-          نظام التقييم النهائي
-        </h3>
+        <div className="flex items-center gap-6">
+          <h3 className="text-xl font-bold flex items-center gap-2 text-primary">
+            <Database className="w-5 h-5" />
+            نظام التقييم النهائي
+          </h3>
 
-        <div className="flex gap-2">
-          {/* زر التصدير: لن يعمل إلا إذا كانت هناك بيانات (تم الضغط على تحديث) */}
+          <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border border-primary/20">
+            <Checkbox
+              id="weight-mode"
+              checked={isUniformWeight}
+              onCheckedChange={(checked) => setIsUniformWeight(!!checked)}
+            />
+            <label
+              htmlFor="weight-mode"
+              className="text-sm font-bold flex items-center gap-1.5 cursor-pointer select-none"
+            >
+              <Scale className="w-4 h-4 text-primary" />
+              وزن موحد لجميع الصفوف
+            </label>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          {loading && (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground animate-pulse">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              جاري معالجة الحسابات...
+            </div>
+          )}
+
           <ExportToExcel
             snapshot={snapshot}
-            data={data} // بيانات الـ CSV القادمة كـ Props
+            data={data}
             loading={loading}
             selectedColumns={selectedColumns}
             rowIds={rowIds}
           />
-
-          <Button onClick={() => handleManualUpdate(data)} disabled={loading}>
-            {loading ? (
-              <RefreshCw className="ml-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Calculator className="ml-2 h-4 w-4" />
-            )}
-            تحديث وحفظ الحسابات
-          </Button>
         </div>
       </div>
 
-      <div className="relative overflow-x-auto border rounded-lg">
+      {/* Table Section */}
+      <div className="relative overflow-x-auto border rounded-lg shadow-inner bg-white min-h-[300px]">
         {snapshot.rows.length > 0 ? (
           <Table className="border-collapse text-[10px] text-center w-full">
-            <TableHeader className="bg-muted/50">
-              {/* الصف الأول: العناوين الرئيسية */}
+            <TableHeader className="bg-muted/50 sticky top-0 z-10">
+              {/* Row 1: Headers & Uniform Weights */}
               <TableRow className="text-center">
                 <TableHead
                   rowSpan={2}
@@ -79,9 +105,27 @@ export function FinalSummaryTable({ data }: { data: CSVRow[] }) {
                   <TableHead
                     key={`h1-${id}`}
                     colSpan={snapshot.cols.length + 4}
-                    className="border text-center font-bold bg-primary/5 text-primary"
+                    className="border text-center font-bold bg-primary/5 text-primary p-2"
                   >
-                    مقارنة {id + 1}
+                    <div className="flex flex-col items-center gap-1">
+                      <span>مقارنة {id + 1}</span>
+                      {isUniformWeight && (
+                        <div className="flex items-center gap-1 bg-white p-1 rounded border shadow-sm">
+                          <span className="text-[9px] text-muted-foreground">
+                            الوزن:
+                          </span>
+                          <Input
+                            type="number"
+                            className="h-6 w-16 text-center text-[10px] font-black border-primary/30 focus-visible:ring-1"
+                            value={uniformWeights[id] || ""}
+                            onChange={(e) =>
+                              updateUniformWeight(id, e.target.value)
+                            }
+                            placeholder="%"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </TableHead>
                 ))}
                 <TableHead
@@ -92,7 +136,7 @@ export function FinalSummaryTable({ data }: { data: CSVRow[] }) {
                 </TableHead>
               </TableRow>
 
-              {/* الصف الثاني: العناوين الفرعية */}
+              {/* Row 2: Sub-headers */}
               <TableRow className="text-center">
                 {snapshot.csvKeys.map((k) => (
                   <TableHead
@@ -115,15 +159,11 @@ export function FinalSummaryTable({ data }: { data: CSVRow[] }) {
                         {col}
                       </TableHead>
                     ))}
-                    <TableHead className="border text-center bg-amber-50 text-amber-800">
-                      مجموع %
-                    </TableHead>
-                    <TableHead className="border text-center bg-blue-100 font-bold text-blue-800">
-                      الوزن %
-                    </TableHead>
-                    <TableHead className="border text-center bg-emerald-50 font-bold text-emerald-800">
-                      الموزون
-                    </TableHead>
+                    {finalHead.map((item) => (
+                      <TableHead key={item.key} className={item.className}>
+                        {item.name}
+                      </TableHead>
+                    ))}
                   </React.Fragment>
                 ))}
               </TableRow>
@@ -139,7 +179,7 @@ export function FinalSummaryTable({ data }: { data: CSVRow[] }) {
                     {rowIndex + 1}
                   </TableCell>
 
-                  {/* خلايا بيانات الـ CSV */}
+                  {/* CSV Data Cells */}
                   {snapshot.csvKeys.map((k) => (
                     <TableCell
                       key={`c-${rowIndex}-${k}`}
@@ -149,7 +189,7 @@ export function FinalSummaryTable({ data }: { data: CSVRow[] }) {
                     </TableCell>
                   ))}
 
-                  {/* تفاصيل المقارنات */}
+                  {/* Calculation Cells */}
                   {snapshot.ids.map((id) => (
                     <React.Fragment key={`v-f-${rowIndex}-${id}`}>
                       <TableCell className="border text-center text-muted-foreground italic">
@@ -169,12 +209,19 @@ export function FinalSummaryTable({ data }: { data: CSVRow[] }) {
                         {row.totals?.[id]?.sum}%
                       </TableCell>
 
-                      {/* خلية إدخال الوزن */}
-                      <TableCell className="border text-center bg-blue-50/50 p-1">
+                      <TableCell
+                        className={`border text-center p-1 ${isUniformWeight ? "bg-gray-50" : "bg-blue-50/50"}`}
+                      >
                         <Input
                           type="number"
-                          className="h-7 text-[10px] text-center font-bold border-blue-200 focus:ring-0 mx-auto w-20"
-                          value={rowWeights[rowIndex]?.[id] || ""}
+                          disabled={isUniformWeight}
+                          className={`h-7 text-[10px] text-center font-bold border-blue-200 focus:ring-0 mx-auto w-16 
+                            ${isUniformWeight ? "opacity-60 grayscale border-none shadow-none cursor-not-allowed" : ""}`}
+                          value={
+                            isUniformWeight
+                              ? uniformWeights[id] || ""
+                              : rowWeights[rowIndex]?.[id] || ""
+                          }
                           onChange={(e) =>
                             updateWeight(rowIndex, id, e.target.value)
                           }
@@ -187,7 +234,7 @@ export function FinalSummaryTable({ data }: { data: CSVRow[] }) {
                     </React.Fragment>
                   ))}
 
-                  {/* المتر الإجمالي النهائي */}
+                  {/* Grand Total per Row */}
                   <TableCell className="border text-center font-black bg-blue-50 text-blue-900 text-sm">
                     {row.grandTotal?.toLocaleString("en-US", {
                       minimumFractionDigits: 2,
@@ -200,8 +247,12 @@ export function FinalSummaryTable({ data }: { data: CSVRow[] }) {
           </Table>
         ) : (
           !loading && (
-            <div className="p-20 text-center italic text-muted-foreground border-2 border-dashed rounded-lg">
-              الجدول فارغ، يرجى الضغط على زر التحديث.
+            <div className="flex flex-col items-center justify-center p-20 text-center italic text-muted-foreground border-2 border-dashed rounded-lg m-4">
+              <Database className="w-12 h-12 mb-4 opacity-20" />
+              <p>لا توجد بيانات متاحة حالياً.</p>
+              <p className="text-xs">
+                تأكد من اختيار الأعمدة والمقارنات في الصفحات السابقة.
+              </p>
             </div>
           )
         )}

@@ -31,19 +31,24 @@ export const useCSVHandler = (key: string) => {
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    // pack up file
     const file = event.target.files?.[0];
     if (!file) return;
 
     try {
-      // read and storage data
       const { data, name } = await parseCSV(file);
+
+      if (!data || data.length === 0) {
+        alert("الملف فارغ أو غير صالح");
+        return;
+      }
       await storage.save(key, data);
       await storage.save(`${key}_name`, name);
-      // updata the state of data
       setState({ data, fileName: name });
+      event.target.value = "";
+      console.log(`تم حفظ ${data.length} صف بنجاح في المفتاح: ${key}`);
     } catch (error) {
       console.error("Error parsing/saving CSV:", error);
+      alert("حدث خطأ أثناء قراءة الملف، تأكد من صيغة CSV");
     }
   };
 

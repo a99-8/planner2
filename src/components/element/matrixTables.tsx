@@ -15,7 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { useSettlements } from "@/hooks/useSettlements";
+import { useSettlements } from "@/hooks/other/useSettlements";
 import { type CSVRow } from "@/types/csvRow";
 import { useMatrix } from "@/hooks/useMatrix";
 import { useComparison } from "@/hooks/useComparison";
