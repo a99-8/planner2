@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { TableCell } from "@/components/ui/table";
-import { InputSelector } from "./inputSelector";
+import { InputSelector } from "@/components/other/ui/inputSelector";
 import { useSmartCell } from "@/hooks/other/useSmartCell";
 import { specialFields } from "@/constant/specialFields";
 

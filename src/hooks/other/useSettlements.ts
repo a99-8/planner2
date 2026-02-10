@@ -1,53 +1,40 @@
-import { useState, useEffect } from "react";
-import { storage } from "@/logic/storageHandler";
+import { useLiveQuery } from "dexie-react-hooks";
+import { projectSettlementService } from "@/services/SettlementDataService";
+import { projectDataService } from "@/services/projectDataService";
 
-export const useSettlements = (key: string) => {
-  const [columns, setColumns] = useState<string[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+export const useSettlements = (projectId: string) => {
+  // 1. جلب الأعمدة الأصلية من جدول البيانات (Lands)
+  const originalTable = useLiveQuery(
+    () => projectDataService.getTable(projectId, "Lands"),
+    [projectId],
+  );
 
-  // uploda data for the frist time
-  useEffect(() => {
-    const loadSavedColumns = async () => {
-      const saved = await storage.get(`${key}_selected_cols`);
-      if (saved) {
-        setColumns(saved);
-      }
-      setIsLoaded(true);
-    };
-    loadSavedColumns();
-  }, [key]);
+  // 2. جلب إعدادات التسوية المحفوظة حالياً
+  const settlementRecord = useLiveQuery(
+    () => projectSettlementService.getTable(projectId),
+    [projectId],
+  );
 
-  // listener so the comparison table updata
-  useEffect(() => {
-    const handleStorageUpdate = async () => {
-      const updatedData = await storage.get(`${key}_selected_cols`);
-      setColumns(updatedData || []);
-    };
+  // استخراج البيانات
+  const allAvailableColumns = originalTable?.headers || []; // كل الأعمدة في الـ CSV
+  const selectedHeaders = settlementRecord?.headers || []; // الأعمدة التي تم اختيارها للتسوية
 
-    window.addEventListener("settlements_updated", handleStorageUpdate);
-    return () => {
-      window.removeEventListener("settlements_updated", handleStorageUpdate);
-    };
-  }, [key]);
-
-  // updata data when click on the cheak box
   const toggleColumn = async (columnName: string) => {
-    const newSelection = columns.includes(columnName)
-      ? columns.filter((col) => col !== columnName)
-      : [...columns, columnName];
+    try {
+      const newSelection = selectedHeaders.includes(columnName)
+        ? selectedHeaders.filter((col) => col !== columnName)
+        : [...selectedHeaders, columnName];
 
-    setColumns(newSelection);
-
-    // save data in storage
-    await storage.save(`${key}_selected_cols`, newSelection);
-
-    // make the other com notice
-    window.dispatchEvent(new Event("settlements_updated"));
+      await projectSettlementService.saveTable(projectId, newSelection);
+    } catch (error) {
+      console.error("خطأ أثناء تحديث خيارات التسوية:", error);
+    }
   };
 
   return {
-    selectedColumns: columns,
-    isLoaded,
+    allAvailableColumns, // القائمة الكاملة للعرض في الـ Popover
+    selectedHeaders, // لمعرفة أي Checkbox يجب أن يكون Checked
     toggleColumn,
+    isLoading: originalTable === undefined || settlementRecord === undefined,
   };
 };

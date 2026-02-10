@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { storage } from "@/logic/storageHandler";
+// import { storage } from "@/logic/storageHandler";
 
 interface UseSmartCellProps {
   type: "comparison" | "matrix" | "header";
@@ -20,14 +20,7 @@ export function useSmartCell({
 
   useEffect(() => {
     const fetchData = async () => {
-      if (type === "header") {
-        const targetId = extraId !== undefined ? extraId : id;
-        const saved = await storage.get(`comp_table_${targetId}_${field}`);
-        setVal(saved ?? "");
-      } else if (onFetch) {
-        const res = await onFetch();
-        setVal(res ?? "");
-      }
+      console.log("fetchData called");
     };
 
     fetchData();

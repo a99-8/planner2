@@ -1,52 +1,43 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { MainTable } from "@/components/element/mainTable";
-import { useCSVHandler } from "@/hooks/useCSVHandler";
-import { Trash2 } from "lucide-react";
+import { useProjects } from "@/hooks/main/useProjects";
+import StatusHandler from "@/components/other/StatusHandler";
+import ProjectItem from "@/components/main/ProjectListItem";
+import ProjectListIHaeder from "@/components/main/ProjectListHeader";
 
 export default function Home() {
-  const {
-    data,
-    fileName,
-    fileInputRef,
-    handleFileChange,
-    openFilePicker,
-    clearData,
-    isMounted,
-  } = useCSVHandler("main_dashboard");
-
-  if (!isMounted) {
-    return <div className="p-6">جاري تحميل الإعدادات...</div>;
-  }
+  const actions = useProjects();
+  const { projects, isLoading } = actions;
 
   return (
-    <div className="p-6 space-y-4">
-      <div className="flex items-center gap-4">
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          className="hidden"
-          accept=".csv"
-        />
+    <div
+      className="p-6 space-y-8 max-w-7xl mx-auto animate-in fade-in duration-500"
+      dir="rtl"
+    >
+      {/* Header */}
+      <ProjectListIHaeder />
 
-        <Button onClick={openFilePicker}>Upload CSV</Button>
+      {/* Projects List */}
+      <div className="border rounded-2xl p-6 bg-card shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between mb-6 border-b pb-4">
+          <h2 className="font-bold text-xl flex items-center gap-2">
+            <span className="w-2 h-6 bg-primary rounded-full" />
+            المشاريع المحفوظة ({projects.length})
+          </h2>
+        </div>
 
-        <Label className="bg-muted p-2 rounded border border-border">
-          {fileName}
-        </Label>
-
-        {data.length > 0 && (
-          <Button variant="destructive" onClick={clearData} className="gap-2">
-            <Trash2 size={16} />
-            Clear Data
-          </Button>
+        {isLoading ? (
+          <StatusHandler type="loading" />
+        ) : projects.length === 0 ? (
+          <StatusHandler type="noProject" />
+        ) : (
+          <div className="space-y-4">
+            {projects.map((project) => (
+              <ProjectItem key={project.id} {...project} />
+            ))}
+          </div>
         )}
       </div>
-
-      <MainTable data={data} />
     </div>
   );
 }

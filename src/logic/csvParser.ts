@@ -1,15 +1,24 @@
 import Papa from "papaparse";
-import { type CSVRow } from "@/types/csvRow";
 
 export const parseCSV = (
   file: File,
-): Promise<{ data: CSVRow[]; name: string }> => {
+): Promise<{
+  data: Record<string, any>[];
+  name: string;
+  headers: string[];
+}> => {
   return new Promise((resolve, reject) => {
-    Papa.parse<CSVRow>(file, {
-      header: true,
-      skipEmptyLines: true,
+    Papa.parse(file, {
+      header: true, // هذا يحول الصف الأول تلقائياً إلى Keys
+      skipEmptyLines: "greedy", // يتجاهل الأسطر الفارغة حتى لو تحتوي على مسافات
       complete: (results) => {
-        resolve({ data: results.data, name: file.name });
+        const headers = results.meta.fields || [];
+
+        resolve({
+          data: results.data as Record<string, any>[],
+          name: file.name,
+          headers: headers,
+        });
       },
       error: (error) => reject(error),
     });
