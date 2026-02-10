@@ -3,15 +3,24 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Project } from "@/types/userTypes";
 import { Trash2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useLands } from "@/hooks/main/useLands";
 import StatusHandler from "@/components/other/StatusHandler";
 import { LandsTable } from "@/components/main/landsTable";
+import { useLands } from "@/hooks/useLayouts";
 
-const Lands = (project: Project) => {
+interface LandsProps {
+  projectId: string;
+  landsTable: {
+    fileName: string;
+    header: string[];
+    dataRow: Record<string, any[]>;
+  };
+}
+
+const Lands = ({ projectId }: LandsProps) => {
+  // نأخذ فقط projectId لأن useLands تجلب الباقي عبر useLiveQuery
   const {
     data,
     headers,
@@ -19,11 +28,11 @@ const Lands = (project: Project) => {
     handleFileChange,
     openFilePicker,
     clearData,
-    isMounted,
+    isLoading,
     fileInputRef,
-  } = useLands(project.id);
+  } = useLands(projectId);
 
-  if (!isMounted) {
+  if (!isLoading) {
     return <StatusHandler type="loading" />;
   }
 

@@ -1,15 +1,17 @@
 "use client";
 
-import { Project } from "@/types/userTypes";
+import { ControlButtons } from "@/components/custom/uiLast";
+import { useProjects } from "@/hooks/useProjectMain";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { ControlButtons } from "@/components/other/ui/uiLast";
-import { ProjectControlButtons } from "@/constant/allControlButtons.data";
-import { useProjects } from "@/hooks/main/useProjects";
-import { formadDate } from "@/func/formadDate";
+import {
+  formadDate,
+  ProjectControlButtons,
+  ProjectStructure,
+} from "@/lib/index";
 
-const ProjectListItem = ({ name, id, updatedAt }: Project) => {
+const ProjectListItem = ({ name, id, updatedAt }: ProjectStructure) => {
   const { handleAction } = useProjects();
   return (
     <div className="group flex flex-col md:flex-row items-start md:items-center justify-between border border-slate-200 rounded-xl p-5 hover:border-primary/40 hover:bg-slate-50/50 transition-all duration-200">
@@ -46,7 +48,7 @@ const ProjectListItem = ({ name, id, updatedAt }: Project) => {
             key={btn.id}
             {...btn}
             defaultValue={btn.id === "rename" ? name : ""}
-            onClick={(val) => handleAction(btn.id, val, id)}
+            onClick={(val: string) => handleAction(btn.id, val, id)}
           />
         ))}
       </div>

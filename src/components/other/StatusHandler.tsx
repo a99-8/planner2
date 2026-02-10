@@ -1,6 +1,11 @@
 import { Loader2, FolderPlus, Database } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { StatusHandlerProps } from "@/types/userTypes";
+import { cn } from "@/lib/index";
+
+export interface StatusHandlerProps {
+  type: "loading" | "noProject" | "noData" | "error";
+  className?: string;
+  message?: string;
+}
 
 const StatusHandler = ({ type, className, message }: StatusHandlerProps) => {
   return (

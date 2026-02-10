@@ -1,9 +1,9 @@
 "use client";
 
-import { useProjects } from "@/hooks/main/useProjects";
 import StatusHandler from "@/components/other/StatusHandler";
 import ProjectItem from "@/components/main/ProjectListItem";
 import ProjectListIHaeder from "@/components/main/ProjectListHeader";
+import { useProjects } from "@/hooks/useProjectMain";
 
 export default function Home() {
   const actions = useProjects();

@@ -15,13 +15,24 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import { ControlButtons as ControlButtonsProps } from "@/types/userTypes";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { LucideIcon } from "lucide-react";
+
+export type ControlButtonsProps = {
+  id: string;
+  name: string;
+  dis: string;
+  icon: LucideIcon;
+  onClick: () => void;
+  className: string;
+  hidden: string;
+  placeholder?: string;
+};
 
 interface Props extends Omit<ControlButtonsProps, "onClick"> {
   onClick: (inputValue?: string) => void;

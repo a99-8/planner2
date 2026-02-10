@@ -46,3 +46,10 @@ export const GlobalControlButtons = [
     hover: false,
   },
 ];
+
+export const specialFields = [
+  "نوع المقارنة",
+  "التاريخ",
+  "الرقم المرجعي",
+  "الاحداثيات",
+];

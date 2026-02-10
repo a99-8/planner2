@@ -14,7 +14,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import StatusHandler from "../other/StatusHandler";
-import { useSettlements } from "@/hooks/other/useSettlements";
+import { useSettlements } from "@/hooks/useOther";
 
 export function SettlementsPopover({ projectId }: { projectId: string }) {
   const { allAvailableColumns, selectedHeaders, toggleColumn, isLoading } =
