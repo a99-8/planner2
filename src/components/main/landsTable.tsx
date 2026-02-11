@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { StatusHandler } from "@/components/other/otherList";
+import StatusHandler from "@/components/custom/StatusHandler";
 
 // تحديد النوع لاستلام البيانات الجديدة
 interface LandsTableProps {

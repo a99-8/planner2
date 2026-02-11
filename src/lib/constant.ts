@@ -47,9 +47,61 @@ export const GlobalControlButtons = [
   },
 ];
 
+// البيانات ذات حقول الادخال المميزة
 export const specialFields = [
   "نوع المقارنة",
   "التاريخ",
   "الرقم المرجعي",
   "الاحداثيات",
+];
+
+// رؤس جدول المقارنات الثابتة
+export const staticHeaders = [
+  "سعر المتر",
+  "نوع المقارنة",
+  "التاريخ",
+  "الرقم المرجعي",
+  "الاحداثيات",
+];
+
+// الاعمدة الاخيرة في جدول التلخيص
+export const finalHead = [
+  {
+    key: "sum",
+    name: "  مجموع %",
+    className: "border text-center bg-amber-50 text-amber-800",
+  },
+  {
+    key: "weight",
+    name: " الوزن %",
+    className: "border text-center bg-blue-100 font-bold text-blue-800",
+  },
+  {
+    key: "weighed",
+    name: "الموزون",
+    className: "border text-center bg-emerald-50 font-bold text-emerald-800",
+  },
+];
+
+// رؤس اعمدة التحكم بالمجموعات
+export const controlGroupHeaders = [
+  " قيمة المجموعة",
+  " أصغر قيمة",
+  " أكبر قيمة",
+  " عدد المجموعات",
+];
+
+// رؤس اعمدة التحكم بالمجموعات
+export const controlSelHeaders = [" التسوية الأساسية", " مقدار القفزة"];
+
+// انواع المقارنات
+export const comparisonsType = ["تنفيذ", "معروض", "حد", "سوم", "ايجار"];
+
+// انواع مراجع الصفقات
+export const dealReferences = [
+  "رقم الجوال",
+  "رقم الصفقة",
+  "رقم العقار",
+  "عقود إيجار",
+  "البحث الميداني",
 ];

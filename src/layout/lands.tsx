@@ -6,7 +6,7 @@ import {
 import { Trash2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import StatusHandler from "@/components/other/StatusHandler";
+import StatusHandler from "@/components/custom/StatusHandler";
 import { LandsTable } from "@/components/main/landsTable";
 import { useLands } from "@/hooks/useLayouts";
 
@@ -20,7 +20,6 @@ interface LandsProps {
 }
 
 const Lands = ({ projectId }: LandsProps) => {
-  // نأخذ فقط projectId لأن useLands تجلب الباقي عبر useLiveQuery
   const {
     data,
     headers,
@@ -32,7 +31,7 @@ const Lands = ({ projectId }: LandsProps) => {
     fileInputRef,
   } = useLands(projectId);
 
-  if (!isLoading) {
+  if (isLoading) {
     return <StatusHandler type="loading" />;
   }
 
@@ -41,7 +40,9 @@ const Lands = ({ projectId }: LandsProps) => {
 
   return (
     <AccordionItem value={"Lands"} dir="rtl">
-      <AccordionTrigger>Lands</AccordionTrigger>
+      <AccordionTrigger className="text-xl font-bold">
+        الاراضي (Lands)
+      </AccordionTrigger>
       <AccordionContent>
         <div className="p-6 space-y-4">
           <div className="flex items-center gap-4">

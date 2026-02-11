@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import StatusHandler from "../other/StatusHandler";
+import StatusHandler from "../custom/StatusHandler";
 import { useSettlements } from "@/hooks/useOther";
 
 export function SettlementsPopover({ projectId }: { projectId: string }) {

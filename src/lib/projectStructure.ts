@@ -1,4 +1,5 @@
 // types/projectStructure.ts
+
 export interface ProjectStructure {
   id: string;
   name: string;
@@ -20,13 +21,26 @@ export interface ProjectStructure {
     header: string[];
     dataRow: Record<string, any[]>;
   };
-  areaControl: (string | number)[];
   reference: {
     settlementsTable: {
       name: string[];
       header: any;
       frsCol: any;
-      dataRow: any;
+      dataRow: Record<string, any[]>;
+      AutomaticColumns: boolean;
+      ControllingValue: number;
+      columnSettings: Record<
+        string,
+        {
+          isAuto: boolean;
+          isInterpolated: boolean;
+          baseGroup: number;
+          maxValue: number;
+          minValue: number;
+          baseSettlement: number;
+          increment: number;
+        }
+      >;
     };
   };
   summary: {

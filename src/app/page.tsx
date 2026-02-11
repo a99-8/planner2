@@ -1,8 +1,8 @@
 "use client";
 
-import StatusHandler from "@/components/other/StatusHandler";
-import ProjectItem from "@/components/main/ProjectListItem";
-import ProjectListIHaeder from "@/components/main/ProjectListHeader";
+import StatusHandler from "@/components/custom/StatusHandler";
+import ProjectItem from "@/components/project/ProjectListItem";
+import ProjectListIHaeder from "@/components/project/ProjectListHeader";
 import { useProjects } from "@/hooks/useProjectMain";
 
 export default function Home() {

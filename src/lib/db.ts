@@ -7,7 +7,7 @@ export class MyDatabase extends Dexie {
   constructor() {
     super("ProjectsDatabase");
 
-    this.version(2).stores({
+    this.version(1).stores({
       projects: "id, name, updatedAt",
     });
   }

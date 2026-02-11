@@ -46,13 +46,15 @@ export const useProjects = () => {
               header: [],
               dataRow: {},
             },
-            areaControl: [],
             reference: {
               settlementsTable: {
                 name: [],
                 header: {},
                 frsCol: {},
                 dataRow: {},
+                AutomaticColumns: true,
+                ControllingValue: 0,
+                columnSettings: {},
               },
             },
             summary: {

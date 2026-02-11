@@ -1,36 +1,22 @@
-import { SettlementsPopover } from "@/components/main/settlementsTable";
+import { ComparisonTable } from "@/components/main/comparisonTable";
+import { SettlementsPopover } from "@/components/other/settlementsTable";
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-// تعريف الـ Props لتطابق ما يتم تمريره من صفحة ProjectPage
-interface ComparisonProps {
-  projectId: string;
-  settlements: string[];
-  comparisons: {
-    number: number;
-    pricePerMeter: number;
-    header: string[];
-    dataRow: Record<string, any[]>;
-  };
-}
-
-const Comparison = ({ projectId }: ComparisonProps) => {
+const Comparison = ({ projectId }: { projectId: string }) => {
   return (
     <AccordionItem value={"Comparison"}>
       <AccordionTrigger className="text-xl font-bold">
-        المقارنات والتسويات
+        المقارنات والتسويات (Comparisons and settlements)
       </AccordionTrigger>
       <AccordionContent>
         <div className="p-6 space-y-6">
-          {/* هذا المكون داخلياً يستخدم useSettlements الذي عدلناه سابقاً */}
           <SettlementsPopover projectId={projectId} />
-
-          {/* هنا يمكنك مستقبلاً إضافة جدول المقارنات الرئيسي */}
           <div className="mt-4">
-            {/* Component لجدول المقارنات سيوضع هنا */}
+            <ComparisonTable projectId={projectId} />
           </div>
         </div>
       </AccordionContent>

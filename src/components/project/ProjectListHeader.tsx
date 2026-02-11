@@ -1,6 +1,6 @@
 "use client";
 
-import { ControlButtons } from "@/components/custom/uiLast";
+import ControlButtons from "@/components/custom/controlButtons";
 import { useProjects } from "@/hooks/useProjectMain";
 import { GlobalControlButtons } from "@/lib/index";
 
@@ -31,7 +31,7 @@ export default function ProjectListIHaeder() {
           <ControlButtons
             key={btn.id}
             {...btn}
-            onClick={(val: string) => handleAction(btn.id, val)}
+            onClick={(val?: string) => handleAction(btn.id, val)}
           />
         ))}
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { ControlButtons } from "@/components/custom/uiLast";
+import ControlButtons from "@/components/custom/controlButtons";
 import { useProjects } from "@/hooks/useProjectMain";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
@@ -48,7 +48,7 @@ const ProjectListItem = ({ name, id, updatedAt }: ProjectStructure) => {
             key={btn.id}
             {...btn}
             defaultValue={btn.id === "rename" ? name : ""}
-            onClick={(val: string) => handleAction(btn.id, val, id)}
+            onClick={(val?: string) => handleAction(btn.id, val || "", id)}
           />
         ))}
       </div>

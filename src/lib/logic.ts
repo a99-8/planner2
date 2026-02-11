@@ -1,5 +1,7 @@
 import Papa from "papaparse";
+import { staticHeaders } from "./constant";
 
+// دالة تحليل بيانات ملف csv
 export const parseCSV = (
   file: File,
 ): Promise<{
@@ -25,6 +27,7 @@ export const parseCSV = (
   });
 };
 
+// دالة تنسيق التاريخ
 export const formadDate = (date: Date) => {
   // استخراج الوقت بتنسيق 12 ساعة
   const timeStr = date
@@ -44,6 +47,7 @@ export const formadDate = (date: Date) => {
   return `${year}-${month}-${day} ${timeStr}`;
 };
 
+// دالة تحليل البيانات من صف صف الى عمود عمود
 export const formatCSVData = (
   fileName: string,
   rawData: any[], // البيانات القادمة من parseCSV
@@ -73,3 +77,13 @@ export const formatCSVData = (
     data: formattedData, // هذا هو الـ dataRow في الهيكل الجديد
   };
 };
+
+// دالة لتأكد من خلو البيانات من المتكررات
+export function prossHeaders(selectedColumns: any) {
+  const dynamicHeaders = selectedColumns.filter(
+    (col: string) => !staticHeaders.includes(col),
+  );
+
+  const headers = [...staticHeaders, ...dynamicHeaders];
+  return headers;
+}
