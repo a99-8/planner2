@@ -3,6 +3,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import MatrixTables from "@/components/main/matrixTables";
 
 const Martix = ({ projectId }: { projectId: string }) => {
   return (
@@ -12,7 +13,9 @@ const Martix = ({ projectId }: { projectId: string }) => {
       </AccordionTrigger>
       <AccordionContent>
         <div className="p-6 space-y-4">
-          <div className="flex flex-wrap gap-4"></div>
+          <div className="flex flex-wrap gap-4">
+            <MatrixTables projectId={projectId} />
+          </div>
         </div>
       </AccordionContent>
     </AccordionItem>

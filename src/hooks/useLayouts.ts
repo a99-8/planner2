@@ -158,3 +158,15 @@ export const useComparison = (projectId: string) => {
     isLoading: project === undefined,
   };
 };
+
+// تحديث قسم التسويات
+export const useMatrix = (projectId: string) => {
+  const project = useLiveQuery(
+    () => projectService.getProject(projectId),
+    [projectId],
+  );
+
+  return {
+    selectedHeaders: project?.settlements || [],
+  };
+};

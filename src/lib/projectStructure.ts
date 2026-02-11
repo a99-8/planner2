@@ -37,6 +37,7 @@ export interface ProjectStructure {
           baseGroup: number;
           maxValue: number;
           minValue: number;
+          groupCount: number;
           baseSettlement: number;
           increment: number;
         }
