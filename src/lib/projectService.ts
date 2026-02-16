@@ -14,8 +14,9 @@ export const projectService = {
   },
 
   // 2. الحصول على مشروع واحد بواسطة ID
-  async getProject(id: string): Promise<ProjectStructure | undefined> {
-    return await db.projects.get(id);
+  async getProject(id: string): Promise<ProjectStructure | null> {
+    const project = await db.projects.get(id);
+    return project ?? null;
   },
 
   // 3. الحصول على جميع المشاريع

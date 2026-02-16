@@ -1,14 +1,24 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { useParams } from "next/navigation";
-import { db, ProjectStructure, projectService } from "@/lib/index";
+import {
+  db,
+  ProjectStructure,
+  projectService,
+  staticHeaders,
+} from "@/lib/index";
 import { match } from "ts-pattern";
 
 export function useProjectData() {
   const params = useParams();
-  const id = params.id as string;
-  const project = useLiveQuery(() => projectService.getProject(id), [id]);
+  const id = params?.id as string;
+
+  const project = useLiveQuery(() => {
+    if (!id) return Promise.resolve(null);
+    return projectService.getProject(id);
+  }, [id]);
+
   const isLoading = project === undefined;
-  const notFound = !isLoading && !project;
+  const notFound = !isLoading && (!project || !id);
 
   return {
     project: project as ProjectStructure | null,
@@ -36,37 +46,44 @@ export const useProjects = () => {
           const newProject: ProjectStructure = {
             id: crypto.randomUUID(),
             name: val || "مشروع جديد",
+            hasData: false,
             updatedAt: new Date(),
             dis: { id_sum: 0, area_sum: 0 },
             landsTable: { fileName: "", header: [], dataRow: {} },
             settlements: [],
             comparisons: {
-              number: 0,
-              pricePerMeter: 0,
               header: [],
-              dataRow: {},
+              comparison: [],
             },
             reference: {
               settlementsTable: {
-                name: [],
-                header: {},
-                frsCol: {},
+                name: "",
+                header: staticHeaders,
+                frRow: [],
                 dataRow: {},
-                AutomaticColumns: true,
-                ControllingValue: 0,
-                columnSettings: {},
+                settings: {
+                  isAuto: false,
+                  isInterpolated: false,
+                  baseGroup: 0,
+                  maxValue: 0,
+                  minValue: 0,
+                  groupCount: 0,
+                  baseSettlement: 0,
+                  increment: 0,
+                },
               },
             },
             summary: {
-              frsCol: 0,
-              secCol: {},
-              frsHeader: "",
-              secHeader: [],
-              weighted: {
-                singleORall: false,
-                priceAfterSettlements: 0,
-                priceAfterWeighted: 0,
-                total: 0,
+              rowNum: {
+                comparisonsinfo: {
+                  number: 0,
+                  pricePerMeter: 0,
+                  Weight: 0,
+                  totleSettlements: 0,
+                  priceAfterSettlements: 0,
+                  priceAfterWeighted: 0,
+                },
+                totlePrice: 0,
               },
             },
           };

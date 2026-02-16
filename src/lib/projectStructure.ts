@@ -1,12 +1,9 @@
-// types/projectStructure.ts
-
 export interface ProjectStructure {
   id: string;
   name: string;
+  hasData: boolean;
   updatedAt: Date;
   dis: {
-    id_sum: number;
-    area_sum: number;
     [key: string]: any;
   };
   landsTable: {
@@ -16,44 +13,41 @@ export interface ProjectStructure {
   };
   settlements: string[];
   comparisons: {
-    number: number;
-    pricePerMeter: number;
     header: string[];
-    dataRow: Record<string, any[]>;
+    comparison: {
+      num: number;
+      dataRow: Record<string, any[]>;
+    }[];
   };
   reference: {
     settlementsTable: {
-      name: string[];
-      header: any;
-      frsCol: any;
+      name: string;
+      header: any[];
+      frRow: any[];
       dataRow: Record<string, any[]>;
-      AutomaticColumns: boolean;
-      ControllingValue: number;
-      columnSettings: Record<
-        string,
-        {
-          isAuto: boolean;
-          isInterpolated: boolean;
-          baseGroup: number;
-          maxValue: number;
-          minValue: number;
-          groupCount: number;
-          baseSettlement: number;
-          increment: number;
-        }
-      >;
+      settings: {
+        isAuto: boolean;
+        isInterpolated: boolean;
+        baseGroup: number;
+        minValue: number;
+        maxValue: number;
+        groupCount: number;
+        baseSettlement: number;
+        increment: number;
+      };
     };
   };
   summary: {
-    frsCol: number;
-    secCol: any;
-    frsHeader: string;
-    secHeader: string[];
-    weighted: {
-      singleORall: boolean;
-      priceAfterSettlements: number;
-      priceAfterWeighted: number;
-      total: number;
+    rowNum: {
+      comparisonsinfo: {
+        number: number;
+        pricePerMeter: number;
+        Weight: number;
+        totleSettlements: number;
+        priceAfterSettlements: number;
+        priceAfterWeighted: number;
+      };
+      totlePrice: number;
     };
   };
 }

@@ -11,11 +11,10 @@ export const parseCSV = (
 }> => {
   return new Promise((resolve, reject) => {
     Papa.parse(file, {
-      header: true, // هذا يحول الصف الأول تلقائياً إلى Keys
+      header: true,
       skipEmptyLines: "greedy", // يتجاهل الأسطر الفارغة حتى لو تحتوي على مسافات
       complete: (results) => {
         const headers = results.meta.fields || [];
-
         resolve({
           data: results.data as Record<string, any>[],
           name: file.name,
@@ -72,9 +71,9 @@ export const formatCSVData = (
   });
 
   return {
-    name: fileName,
-    headers: headers,
-    data: formattedData, // هذا هو الـ dataRow في الهيكل الجديد
+    fileName: fileName || "لا يوجد ملف مختار",
+    header: headers,
+    dataRow: formattedData, // هذا هو الـ dataRow في الهيكل الجديد
   };
 };
 
@@ -87,3 +86,48 @@ export function prossHeaders(selectedColumns: any) {
   const headers = [...staticHeaders, ...dynamicHeaders];
   return headers;
 }
+
+// تعبئة مصفوفة التسويات بشروط معينة
+export function generateRangeArray({
+  start,
+  end,
+  step,
+}: {
+  start: number;
+  end: number;
+  step: number;
+}) {
+  let result = [];
+  let current = start;
+
+  while (current <= end) {
+    result.push(current);
+    current += step;
+  }
+
+  return result;
+}
+
+/**
+ * تحويل البيانات من نظام الأعمدة (تخزين) إلى نظام الصفوف (عرض)
+ * لتتوافق مع TanStack Table ومتطلبات واجهة المستخدم.
+ */
+export const transformToRows = <T extends Record<string, any[]>>(
+  dataRow: T,
+  headers: string[],
+): Record<string, any>[] => {
+  if (!dataRow || !headers || headers.length === 0) return [];
+
+  // تحديد عدد الصفوف بناءً على طول مصفوفة أول عمود
+  const rowCount = dataRow[headers[0]]?.length || 0;
+
+  return Array.from({ length: rowCount }).map((_, rowIndex) => {
+    return headers.reduce(
+      (acc, header) => {
+        acc[header] = dataRow[header]?.[rowIndex] ?? "";
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+  });
+};
