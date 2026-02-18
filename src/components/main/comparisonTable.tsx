@@ -76,6 +76,7 @@ export function ComparisonTable({ projectId }: { projectId: string }) {
                       className="p-1 border-x min-w-[140px]"
                     >
                       <ComparisonCell
+                        key={`cell-${comp.num}-${header}-${colIndex}`}
                         field={header}
                         value={comparisons.getValue(comp.num, header)} // جلب القيمة هنا وتمريرها جاهزة
                         onChange={(val) =>
@@ -90,7 +91,7 @@ export function ComparisonTable({ projectId }: { projectId: string }) {
                     <Button
                       variant="destructive"
                       size="icon"
-                      className="hover:bg-destructive/10 hover:text-destructive transition-colors"
+                      className="hover:bg-destructive/10 hover:text-destructive"
                       onClick={() => comparisons.delete(comp.num)}
                     >
                       <Trash2 className="w-4 h-4" />

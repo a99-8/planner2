@@ -57,25 +57,6 @@ export const staticHeaders = [
   "الاحداثيات",
 ];
 
-// الاعمدة الاخيرة في جدول التلخيص
-export const finalHead = [
-  {
-    key: "sum",
-    name: "  مجموع %",
-    className: "border text-center bg-amber-50 text-amber-800",
-  },
-  {
-    key: "weight",
-    name: " الوزن %",
-    className: "border text-center bg-blue-100 font-bold text-blue-800",
-  },
-  {
-    key: "weighed",
-    name: "الموزون",
-    className: "border text-center bg-emerald-50 font-bold text-emerald-800",
-  },
-];
-
 // رؤس اعمدة التحكم بالمجموعات
 export const controlGroupHeaders = [
   " قيمة المجموعة",
@@ -91,10 +72,18 @@ export const controlSelHeaders = [" التسوية الأساسية", " مقدا
 export const comparisonsType = ["تنفيذ", "معروض", "حد", "سوم", "ايجار"];
 
 // انواع مراجع الصفقات
-export const dealReferences = [
+export const dealmatrixs = [
   "رقم الجوال",
   "رقم الصفقة",
   "رقم العقار",
   "عقود إيجار",
   "البحث الميداني",
+];
+
+// الاعمدة النهائية في جدول الملخص
+export const finalHead = [
+  "سعر المتر ",
+  "قيمة المتر بعد التسويات ",
+  "المرجح الموزون ",
+  "قيمة المتر بعد المرجح ",
 ];

@@ -19,23 +19,25 @@ export interface ProjectStructure {
       dataRow: Record<string, any[]>;
     }[];
   };
-  reference: {
-    settlementsTable: {
-      name: string;
-      header: any[];
-      frRow: any[];
-      dataRow: Record<string, any[]>;
-      settings: {
-        isAuto: boolean;
-        isInterpolated: boolean;
-        baseGroup: number;
-        minValue: number;
-        maxValue: number;
-        groupCount: number;
-        baseSettlement: number;
-        increment: number;
-      };
-    };
+  matrix: {
+    settlementsTable: Record<
+      string,
+      {
+        name: string;
+        header: any[];
+        dataRow: Record<string, any[]>;
+        settings: {
+          isAuto: boolean;
+          isInterpolated: boolean;
+          baseGroup: number;
+          minValue: number;
+          maxValue: number;
+          groupCount: number;
+          baseSettlement: number;
+          increment: number;
+        };
+      }
+    >;
   };
   summary: {
     rowNum: {

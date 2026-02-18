@@ -1,6 +1,5 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { projectService, staticHeaders } from "@/lib/index";
-import { useState, useEffect, useCallback } from "react";
 
 export const useSettlements = (projectId: string) => {
   const project = useLiveQuery(
@@ -13,7 +12,7 @@ export const useSettlements = (projectId: string) => {
 
     const currentSettlements = project.settlements || [];
     const newSettlementsTable: Record<string, any> = {
-      ...project.reference.settlementsTable,
+      ...project.matrix.settlementsTable,
     };
     let newSettlements: string[];
 
@@ -35,7 +34,6 @@ export const useSettlements = (projectId: string) => {
         // new settlements table
         name: columnName,
         header: project?.landsTable?.dataRow[columnName] || [],
-        frRow: getColumnValues(columnName) || [1, 2, 3],
         dataRow: {},
         settings: {
           isAuto: false,
@@ -51,7 +49,6 @@ export const useSettlements = (projectId: string) => {
     }
 
     const newComparisonHeaders = [...staticHeaders, ...newSettlements];
-    console.log(newComparisonHeaders);
     // 4. الحفظ النهائي
     await projectService.updateProjectSection(projectId, {
       settlements: newSettlements,
@@ -59,7 +56,7 @@ export const useSettlements = (projectId: string) => {
         ...project.comparisons,
         header: newComparisonHeaders,
       },
-      "reference.settlementsTable": newSettlementsTable,
+      "matrix.settlementsTable": newSettlementsTable,
     } as any);
   };
 

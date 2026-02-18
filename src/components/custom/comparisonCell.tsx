@@ -16,7 +16,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { comparisonsType, dealReferences } from "@/lib";
+import { comparisonsType, dealmatrixs } from "@/lib";
+import { format } from "date-fns";
 
 export function ComparisonCell({
   field,
@@ -48,6 +49,10 @@ export function ComparisonCell({
             );
 
           case "التاريخ": {
+            const displayDate =
+              value instanceof Date
+                ? format(value, "yyyy/MM/dd")
+                : value || "اختر التاريخ";
             return (
               <Popover>
                 <PopoverTrigger asChild>
@@ -55,7 +60,7 @@ export function ComparisonCell({
                     variant="ghost"
                     className="h-8 w-full justify-between text-right font-normal px-2"
                   >
-                    <span className="truncate text-[10px]">{value}</span>
+                    <span className="truncate text-[10px]">{displayDate}</span>
                     <ChevronDownIcon className="h-3 w-3 opacity-50" />
                   </Button>
                 </PopoverTrigger>
@@ -79,7 +84,7 @@ export function ComparisonCell({
                     <SelectValue placeholder="النوع" />
                   </SelectTrigger>
                   <SelectContent>
-                    {dealReferences.map((r) => (
+                    {dealmatrixs.map((r) => (
                       <SelectItem key={r} value={r}>
                         {r}
                       </SelectItem>
@@ -95,8 +100,7 @@ export function ComparisonCell({
                 <Input
                   placeholder="طول، عرض"
                   className="h-7 text-[10px] pr-6 border-none bg-muted/10 text-center"
-                  value={value}
-                  onChange={onChange}
+                  onChange={(e) => onChange(e.target.value)}
                 />
                 <MapPin className="absolute right-2 top-2 h-3 w-3 text-muted-foreground opacity-70" />
               </div>
@@ -106,8 +110,7 @@ export function ComparisonCell({
             return (
               <Input
                 className="h-8 text-center border-none focus-visible:ring-1 bg-transparent text-sm"
-                value={value}
-                onChange={onChange}
+                onChange={(e) => onChange(e.target.value)}
               />
             );
         }

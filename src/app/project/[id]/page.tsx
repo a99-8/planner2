@@ -19,12 +19,7 @@ export default function ProjectPage() {
   if (isLoading) return <StatusHandler type="loading" />;
 
   if (notFound || !project) {
-    return (
-      <StatusHandler
-        type="noData"
-        message="عذراً، لم يتم العثور على هذا المشروع"
-      />
-    );
+    return <StatusHandler type="projectNotFound" />;
   }
 
   return (
@@ -44,10 +39,7 @@ export default function ProjectPage() {
               </AccordionTrigger>
               <AccordionContent key={`${name}-content-${index}`}>
                 <div className="p-6 space-y-4">
-                  <div className="flex flex-wrap gap-4">
-                    {/* هنا نقوم بتمرير البارامتر الموحد للجميع مرة واحدة */}
-                    <Component projectId={id as string} />
-                  </div>
+                  <Component projectId={id as string} />
                 </div>
               </AccordionContent>
             </AccordionItem>

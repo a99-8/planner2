@@ -55,23 +55,8 @@ export const useProjects = () => {
               header: [],
               comparison: [],
             },
-            reference: {
-              settlementsTable: {
-                name: "",
-                header: staticHeaders,
-                frRow: [],
-                dataRow: {},
-                settings: {
-                  isAuto: false,
-                  isInterpolated: false,
-                  baseGroup: 0,
-                  maxValue: 0,
-                  minValue: 0,
-                  groupCount: 0,
-                  baseSettlement: 0,
-                  increment: 0,
-                },
-              },
+            matrix: {
+              settlementsTable: {},
             },
             summary: {
               rowNum: {

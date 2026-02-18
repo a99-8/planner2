@@ -103,6 +103,11 @@ export function generateRangeArray({
   while (current <= end) {
     result.push(current);
     current += step;
+    if (end - current < step) {
+      current += step;
+      result.push(current);
+      break;
+    }
   }
 
   return result;
@@ -130,4 +135,24 @@ export const transformToRows = <T extends Record<string, any[]>>(
       {} as Record<string, any>,
     );
   });
+};
+
+export const calculateMetrics = (values: any[], step: number) => {
+  const nums = values
+    .map((v) => parseFloat(String(v)))
+    .filter((v) => !isNaN(v));
+  if (!nums.length) return { max: 0, min: 0, count: 0 };
+  const min = Math.min(...nums),
+    max = Math.max(...nums);
+  return {
+    min,
+    nums,
+    max,
+    count: step > 0 ? Math.ceil((max - min) / step) + 1 : 0,
+  };
+};
+
+export const getAverage = (arr: any) => {
+  if (arr.length === 0) return 0; // حماية ضد المصفوفات الفارغة
+  return arr.reduce((a: number, b: number) => a + b) / arr.length;
 };

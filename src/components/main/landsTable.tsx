@@ -56,13 +56,21 @@ export function LandsTable({ projectId }: { projectId: string }) {
           className="hidden"
           accept=".csv"
         />
-        <Button onClick={lands.openPicker} variant={"default"} className="">
+        <Button
+          onClick={lands.openPicker}
+          variant={"default"}
+          className="hover:bg-black/10 hover:text-black"
+        >
           تحميل ملف csv
         </Button>
 
         {hasData && (
           <>
-            <Button variant="destructive" onClick={lands.clear}>
+            <Button
+              variant="destructive"
+              onClick={lands.clear}
+              className="hover:bg-destructive/10 hover:text-destructive"
+            >
               <Trash2 size={8} />
               مسح البيانات
             </Button>
