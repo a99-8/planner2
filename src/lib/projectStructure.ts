@@ -3,15 +3,23 @@ export interface ProjectStructure {
   name: string;
   hasData: boolean;
   updatedAt: Date;
-  dis: {
-    [key: string]: any;
+  control: {
+    type: string;
+    use: string;
+    settlements: string[];
+    dependences: string[];
+    group: string[];
+    Interpolated: string[];
+    dis: {
+      [key: string]: number;
+    };
   };
   landsTable: {
     fileName: string;
-    header: string[];
-    dataRow: Record<string, any[]>;
+    tableData: {
+      [key: string]: any[];
+    };
   };
-  settlements: string[];
   comparisons: {
     header: string[];
     comparison: {
@@ -27,29 +35,40 @@ export interface ProjectStructure {
         header: any[];
         dataRow: Record<string, any[]>;
         settings: {
-          isAuto: boolean;
-          isInterpolated: boolean;
           baseGroup: number;
           minValue: number;
+          average: number;
           maxValue: number;
           groupCount: number;
           baseSettlement: number;
           increment: number;
+          incrementEvery: number;
         };
       }
     >;
   };
   summary: {
-    rowNum: {
-      comparisonsinfo: {
-        number: number;
-        pricePerMeter: number;
-        Weight: number;
-        totleSettlements: number;
-        priceAfterSettlements: number;
-        priceAfterWeighted: number;
-      };
-      totlePrice: number;
+    isTypeSingle: boolean;
+    approximation: number;
+    totalfordependences: {
+      [key: string]: number;
     };
+    rowData: {
+      [key: number]: {
+        compweight: {
+          [key: number]: number;
+        };
+        totalAftarRound: number;
+      };
+    };
+    compweight: {
+      [key: number]: number;
+    };
+    rowNum: Record<
+      number,
+      {
+        [key: number]: number;
+      }
+    >;
   };
 }

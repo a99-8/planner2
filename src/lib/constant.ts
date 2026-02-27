@@ -87,3 +87,51 @@ export const finalHead = [
   "المرجح الموزون ",
   "قيمة المتر بعد المرجح ",
 ];
+
+// بيانات جدول التحكم
+export const disCells = [
+  { name: "اصغر رقم", id: "min", group: "dis", validWithText: false },
+  { name: "اكبر رقم", id: "max", group: "dis", validWithText: false },
+  { name: "المتوسط", id: "avg", group: "dis", validWithText: false },
+  { name: "الوسيط", id: "mid", group: "dis", validWithText: false },
+  { name: "العدد", id: "count", group: "dis", validWithText: true },
+  { name: "المجموع", id: "total", group: "dis", validWithText: false },
+  {
+    name: "التسويات",
+    id: "settlements",
+    group: "control",
+    validWithText: true,
+  },
+  { name: "المجموعات", id: "group", group: "control", validWithText: false },
+  {
+    name: "الزيادات",
+    id: "Interpolated",
+    group: "control",
+    validWithText: true,
+  },
+  {
+    name: "الاعتماديات",
+    id: "dependences",
+    group: "control",
+    validWithText: false,
+  },
+];
+
+// الرؤس الاول لجدول التحكم
+export const mainHeaders = [
+  {
+    label: "الاعمدة",
+    colSpan: 1,
+  },
+  {
+    label: "تفاصيل المشروع",
+    colSpan: 6,
+  },
+  {
+    label: "التحكم في المشروع",
+    colSpan: 4,
+  },
+];
+
+// اوامر رفع المشروع
+const gitCommand = ["git add .", 'git commit -m ""', "git push -u origin main"];

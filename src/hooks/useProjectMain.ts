@@ -1,5 +1,4 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { useParams } from "next/navigation";
 import {
   db,
   ProjectStructure,
@@ -7,11 +6,10 @@ import {
   staticHeaders,
 } from "@/lib/index";
 import { match } from "ts-pattern";
+import { useCallback } from "react";
+import { produce } from "immer";
 
-export function useProjectData() {
-  const params = useParams();
-  const id = params?.id as string;
-
+export function useProjectData(id: string) {
   const project = useLiveQuery(() => {
     if (!id) return Promise.resolve(null);
     return projectService.getProject(id);
@@ -24,7 +22,6 @@ export function useProjectData() {
     project: project as ProjectStructure | null,
     isLoading,
     notFound,
-    projectId: id,
   };
 }
 
@@ -48,28 +45,33 @@ export const useProjects = () => {
             name: val || "مشروع جديد",
             hasData: false,
             updatedAt: new Date(),
-            dis: { id_sum: 0, area_sum: 0 },
-            landsTable: { fileName: "", header: [], dataRow: {} },
-            settlements: [],
+            control: {
+              type: "Default",
+              use: "Default",
+              settlements: [],
+              dependences: [],
+              group: [],
+              Interpolated: [],
+              dis: {},
+            },
+            landsTable: {
+              fileName: "",
+              tableData: {},
+            },
             comparisons: {
-              header: [],
+              header: staticHeaders,
               comparison: [],
             },
             matrix: {
               settlementsTable: {},
             },
             summary: {
-              rowNum: {
-                comparisonsinfo: {
-                  number: 0,
-                  pricePerMeter: 0,
-                  Weight: 0,
-                  totleSettlements: 0,
-                  priceAfterSettlements: 0,
-                  priceAfterWeighted: 0,
-                },
-                totlePrice: 0,
-              },
+              isTypeSingle: true,
+              approximation: 0,
+              totalfordependences: {},
+              rowData: {},
+              compweight: {},
+              rowNum: {},
             },
           };
           return await projectService.saveProject(newProject);
@@ -96,4 +98,22 @@ export const useProjects = () => {
   };
 
   return { projects: projects || [], isLoading, handleAction };
+};
+
+export const useProjectUpdate = (
+  projectId: string,
+  project: ProjectStructure,
+) => {
+  return useCallback(
+    async (recipe: (draft: ProjectStructure) => void) => {
+      if (!project) return null;
+
+      const nextState = produce(project, recipe);
+
+      return await projectService.updateProjectSection(projectId, {
+        ...nextState,
+      });
+    },
+    [projectId, project],
+  );
 };

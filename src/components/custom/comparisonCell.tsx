@@ -101,6 +101,7 @@ export function ComparisonCell({
                   placeholder="طول، عرض"
                   className="h-7 text-[10px] pr-6 border-none bg-muted/10 text-center"
                   onChange={(e) => onChange(e.target.value)}
+                  value={value}
                 />
                 <MapPin className="absolute right-2 top-2 h-3 w-3 text-muted-foreground opacity-70" />
               </div>
@@ -111,6 +112,7 @@ export function ComparisonCell({
               <Input
                 className="h-8 text-center border-none focus-visible:ring-1 bg-transparent text-sm"
                 onChange={(e) => onChange(e.target.value)}
+                value={value}
               />
             );
         }

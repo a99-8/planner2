@@ -1,30 +1,33 @@
 import Papa from "papaparse";
-import { staticHeaders } from "./constant";
 
-// دالة تحليل بيانات ملف csv
-export const parseCSV = (
-  file: File,
-): Promise<{
-  data: Record<string, any>[];
-  name: string;
-  headers: string[];
-}> => {
-  return new Promise((resolve, reject) => {
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: "greedy", // يتجاهل الأسطر الفارغة حتى لو تحتوي على مسافات
-      complete: (results) => {
-        const headers = results.meta.fields || [];
-        resolve({
-          data: results.data as Record<string, any>[],
-          name: file.name,
-          headers: headers,
-        });
-      },
-      error: (error) => reject(error),
+export async function parseCsvToColumnsStructure(file: File): Promise<{
+  fileName: string;
+  columns: Record<string, any[]>;
+}> {
+  const text = await file.text();
+
+  const parsed = Papa.parse<Record<string, any>>(text, {
+    header: true,
+    skipEmptyLines: true,
+  });
+
+  const rows = parsed.data;
+
+  const columns: Record<string, any[]> = {};
+
+  rows.forEach((row) => {
+    Object.entries(row).forEach(([key, value]) => {
+      if (!key) return;
+      if (!columns[key]) columns[key] = [];
+      columns[key].push(value);
     });
   });
-};
+
+  return {
+    fileName: file.name,
+    columns,
+  };
+}
 
 // دالة تنسيق التاريخ
 export const formadDate = (date: Date) => {
@@ -46,47 +49,6 @@ export const formadDate = (date: Date) => {
   return `${year}-${month}-${day} ${timeStr}`;
 };
 
-// دالة تحليل البيانات من صف صف الى عمود عمود
-export const formatCSVData = (
-  fileName: string,
-  rawData: any[], // البيانات القادمة من parseCSV
-  headers: string[],
-) => {
-  // تعريف المخرج بنظام: اسم العمود -> مصفوفة من القيم
-  const formattedData: Record<string, any[]> = {};
-
-  // 1. تهيئة مصفوفة فارغة لكل رأس عمود
-  headers.forEach((header) => {
-    formattedData[header] = [];
-  });
-
-  // 2. توزيع البيانات: كل قيمة تذهب للمصفوفة الخاصة بعمودها
-  rawData.forEach((row) => {
-    headers.forEach((header) => {
-      // التعامل مع القيم المفقودة لضمان عدم وجود undefined
-      const value =
-        row[header] !== undefined && row[header] !== null ? row[header] : "";
-      formattedData[header].push(value);
-    });
-  });
-
-  return {
-    fileName: fileName || "لا يوجد ملف مختار",
-    header: headers,
-    dataRow: formattedData, // هذا هو الـ dataRow في الهيكل الجديد
-  };
-};
-
-// دالة لتأكد من خلو البيانات من المتكررات
-export function prossHeaders(selectedColumns: any) {
-  const dynamicHeaders = selectedColumns.filter(
-    (col: string) => !staticHeaders.includes(col),
-  );
-
-  const headers = [...staticHeaders, ...dynamicHeaders];
-  return headers;
-}
-
 // تعبئة مصفوفة التسويات بشروط معينة
 export function generateRangeArray({
   start,
@@ -103,45 +65,14 @@ export function generateRangeArray({
   while (current <= end) {
     result.push(current);
     current += step;
-    if (end - current < step) {
-      current += step;
-      result.push(current);
-      break;
-    }
   }
 
   return result;
 }
 
-/**
- * تحويل البيانات من نظام الأعمدة (تخزين) إلى نظام الصفوف (عرض)
- * لتتوافق مع TanStack Table ومتطلبات واجهة المستخدم.
- */
-export const transformToRows = <T extends Record<string, any[]>>(
-  dataRow: T,
-  headers: string[],
-): Record<string, any>[] => {
-  if (!dataRow || !headers || headers.length === 0) return [];
-
-  // تحديد عدد الصفوف بناءً على طول مصفوفة أول عمود
-  const rowCount = dataRow[headers[0]]?.length || 0;
-
-  return Array.from({ length: rowCount }).map((_, rowIndex) => {
-    return headers.reduce(
-      (acc, header) => {
-        acc[header] = dataRow[header]?.[rowIndex] ?? "";
-        return acc;
-      },
-      {} as Record<string, any>,
-    );
-  });
-};
-
 export const calculateMetrics = (values: any[], step: number) => {
-  const nums = values
-    .map((v) => parseFloat(String(v)))
-    .filter((v) => !isNaN(v));
-  if (!nums.length) return { max: 0, min: 0, count: 0 };
+  const nums = ConvertingTextArrToNumberArr(values);
+  if (nums.length !== values.length) return { max: 0, min: 0, count: 0 };
   const min = Math.min(...nums),
     max = Math.max(...nums);
   return {
@@ -152,7 +83,92 @@ export const calculateMetrics = (values: any[], step: number) => {
   };
 };
 
-export const getAverage = (arr: any) => {
-  if (arr.length === 0) return 0; // حماية ضد المصفوفات الفارغة
-  return arr.reduce((a: number, b: number) => a + b) / arr.length;
+export const getAverage = (arr: any): number => {
+  if (!arr || arr.length === 0) return 0;
+
+  // 1. تحويل العناصر لأرقام حقيقية وتصفية أي قيم غير صالحة
+  const numericArr = arr
+    .map((item: any) => Number(item))
+    .filter((item: number) => !isNaN(item));
+
+  // 2. الترتيب العددي الصحيح (a - b)
+  const sorted = numericArr.sort((a: any, b: any) => a - b);
+
+  // 3. حساب الوسيط المائل للأصغر
+  const midIndex = Math.floor((sorted.length - 1) / 2);
+
+  return sorted[midIndex];
+};
+
+export function getClosestFloor(
+  value: number,
+  array: number[],
+): number | undefined {
+  // نقوم أولاً بترتيب المصفوفة تصاعدياً للتأكد من دقة النتائج
+  const sortedArray = [...array].sort((a, b) => a - b);
+
+  // نستخدم reduce للبحث عن القيمة المناسبة
+  return sortedArray.reduce(
+    (prev, curr) => {
+      // إذا كان العنصر الحالي أصغر من أو يساوي القيمة المطلوبة، فهو مرشح جيد
+      return curr <= value ? curr : prev;
+    },
+    sortedArray[0] > value ? undefined : sortedArray[0],
+  );
+}
+
+export const makeGroupBase = (min: number, max: number): number[] => {
+  // 1. التقريب حسب القواعد المطلوبة
+  const getRoundedMin = (n: number) => {
+    if (n < 10) return 1;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(n)));
+    return Math.floor(n / magnitude) * magnitude;
+  };
+
+  const getRoundedMax = (n: number) => {
+    const magnitude = Math.pow(10, Math.floor(Math.log10(n)));
+    return Math.floor(n / magnitude) * magnitude;
+  };
+
+  let start = getRoundedMin(min);
+  const end = getRoundedMax(max);
+  const result: number[] = [];
+
+  // 2. توليد الأرقام بتدرج ديناميكي
+  let current = start;
+
+  while (current <= end) {
+    result.push(current);
+
+    // تحديد "الخطوة" بناءً على قيمة الرقم الحالي
+    // إذا كان الرقم 120، الخطوة 100. إذا كان 5، الخطوة 5.
+    let step: number;
+    if (current < 10) {
+      step = 5;
+    } else {
+      // الخطوة هي 10% من رتبة الرقم الحالية (مثلاً المئات خطوتها 100 أو 50 حسب الرغبة)
+      // هنا سنعتمد منطق: 10 -> 100 خطوة 10 | 100 -> 1000 خطوة 100
+      const magnitude = Math.pow(10, Math.floor(Math.log10(current)));
+      step = magnitude;
+    }
+
+    current += step;
+
+    // تصحيح بسيط في حال قفزنا فوق "رتبة" جديدة (مثلاً من 90 إلى 100)
+    if (current > 0) {
+      const nextMag = Math.pow(10, Math.floor(Math.log10(current)));
+      if (nextMag > step && current % nextMag !== 0) {
+        // لضمان الهبوط على أرقام نظيفة مثل 100، 1000
+      }
+    }
+  }
+
+  // التأكد من أن المصفوفة فريدة ومرتبة
+  return [...new Set(result)].filter((n) => n <= end).sort((a, b) => a - b);
+};
+
+export const ConvertingTextArrToNumberArr = (arr: string[]) => {
+  return arr
+    .map((v: any) => parseFloat(String(v)))
+    .filter((v: any) => !isNaN(v));
 };

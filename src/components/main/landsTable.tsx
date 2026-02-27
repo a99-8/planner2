@@ -6,121 +6,84 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import StatusHandler from "@/components/custom/StatusHandler";
+import { ProjectStructure } from "@/lib";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
 import { Trash2 } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { useSections } from "@/hooks/useSections";
-import { useMemo } from "react";
-import { transformToRows } from "@/lib/logic";
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-} from "@tanstack/react-table";
+import { useProjectUpdate } from "@/hooks/useProjectMain";
+import { useLandsSection } from "@/hooks/useSections/useLandsSection";
 
-export function LandsTable({ projectId }: { projectId: string }) {
-  const { lands, isLoading, hasData } = useSections(projectId);
-  // show table function
-  const tableData = useMemo(
-    () => transformToRows(lands.dataRow || {}, lands.header || []),
-    [lands.dataRow, lands.header],
-  );
+export function LandsTable(project: ProjectStructure) {
+  const hasData = project.hasData;
+  const update = useProjectUpdate(project.id, project);
+  const lands = useLandsSection(project, update);
 
-  const columns = useMemo(
-    () =>
-      (lands.header || []).map((h) => ({
-        accessorKey: h,
-        header: h,
-      })),
-    [lands.header],
-  );
-
-  const table = useReactTable({
-    data: tableData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-  //===========================
-
-  if (isLoading) {
-    return <StatusHandler type="loading" />;
-  }
   return (
-    <div className="p-6 space-y-4">
+    <div className="border rounded-md overflow-x-auto w-full p-4 space-y-4">
+      {/* Hidden File Input */}
+      <input
+        type="file"
+        ref={lands.fileInputRef}
+        onChange={lands.handleFileChange}
+        className="hidden"
+        accept=".csv"
+      />
+
+      {/* Control Bar */}
       <div className="flex items-center gap-4">
-        <input
-          type="file"
-          ref={lands.fileInputRef}
-          onChange={lands.handleFileChange}
-          className="hidden"
-          accept=".csv"
-        />
-        <Button
-          onClick={lands.openPicker}
-          variant={"default"}
-          className="hover:bg-black/10 hover:text-black"
-        >
-          تحميل ملف csv
-        </Button>
+        <Button onClick={lands.openPicker}>Upload CSV</Button>
 
         {hasData && (
           <>
+            <Label className="bg-muted p-2 rounded border border-border">
+              {lands.fileName}
+            </Label>
+
             <Button
               variant="destructive"
               onClick={lands.clear}
-              className="hover:bg-destructive/10 hover:text-destructive"
+              className="gap-2"
             >
-              <Trash2 size={8} />
-              مسح البيانات
+              <Trash2 size={16} />
+              Clear Data
             </Button>
-            <Label className="bg-muted p-2 rounded border border-border">
-              اسم الملف : {lands.fileName}
-            </Label>
           </>
         )}
       </div>
-      {hasData ? (
-        <div className="border rounded-md overflow-x-auto w-full">
-          <Table dir="rtl">
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead
-                      key={header.id}
-                      className="min-w-[120px] text-center font-bold"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
+
+      {/* Data Table */}
+      {hasData && (
+        <Table dir="rtl">
+          <TableHeader>
+            <TableRow>
+              {Object.keys(lands.tableData).map((header) => (
+                <TableHead
+                  key={header}
+                  className="min-w-[120px] text-center font-bold"
+                >
+                  {header}
+                </TableHead>
               ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows &&
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="text-center">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </div>
-      ) : (
-        <StatusHandler type="noData" />
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {Object.values(lands.tableData)[0].map((_, rowIndex) => (
+              <TableRow key={rowIndex}>
+                {Object.entries(lands.tableData).map(
+                  ([columnName, columnValues]) => (
+                    <TableCell
+                      key={`${rowIndex}-${columnName}`}
+                      className="text-center"
+                    >
+                      {columnValues[rowIndex]}
+                    </TableCell>
+                  ),
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
     </div>
   );

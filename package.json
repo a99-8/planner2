@@ -22,6 +22,8 @@
     "date-fns": "^4.1.0",
     "dexie": "^4.3.0",
     "dexie-react-hooks": "^4.2.0",
+    "exceljs": "^4.4.0",
+    "immer": "^11.1.4",
     "lucide-react": "^0.563.0",
     "mathjs": "^15.1.0",
     "next": "16.1.6",
@@ -34,7 +36,8 @@
     "tailwind-merge": "^3.4.0",
     "ts-pattern": "^5.9.0",
     "uuid": "^13.0.0",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

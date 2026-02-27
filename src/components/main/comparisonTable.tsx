@@ -10,16 +10,17 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Trash2, Plus, ArrowUpDown } from "lucide-react";
-import { useSections } from "@/hooks/useSections";
 import { ComparisonCell } from "../custom/comparisonCell";
-import { SettlementsPopover } from "../other/settlementsTable";
+import { ProjectStructure } from "@/lib";
+import { useProjectUpdate } from "@/hooks/useProjectMain";
+import { useComparisonsSection } from "@/hooks/useSections/useComparisonsSection";
 
-export function ComparisonTable({ projectId }: { projectId: string }) {
-  const { comparisons } = useSections(projectId);
+export function ComparisonTable(project: ProjectStructure) {
+  const update = useProjectUpdate(project.id, project);
+  const comparisons = useComparisonsSection(project, update);
 
   return (
     <>
-      <SettlementsPopover projectId={projectId} />
       <div className="flex flex-col gap-4">
         {/* رأس الجدول والتحكم */}
         <div className="flex justify-between items-center px-2">
@@ -45,7 +46,7 @@ export function ComparisonTable({ projectId }: { projectId: string }) {
             <TableHeader className="bg-secondary/30">
               <TableRow>
                 <TableHead className="w-16 text-center border-l">م</TableHead>
-                {comparisons.headers.map((header, index) => (
+                {comparisons.headers.map((header: any, index: any) => (
                   <TableHead
                     key={`head-${header}-${index}`}
                     className="text-center border-x"
@@ -59,7 +60,7 @@ export function ComparisonTable({ projectId }: { projectId: string }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {comparisons.data.map((comp) => (
+              {comparisons.data.map((comp: any) => (
                 <TableRow
                   key={`row-${comp.num}`}
                   className="group hover:bg-muted/30 transition-colors"
@@ -70,17 +71,21 @@ export function ComparisonTable({ projectId }: { projectId: string }) {
                   </TableCell>
 
                   {/* خلايا البيانات */}
-                  {comparisons.headers.map((header, colIndex) => (
+                  {comparisons.headers.map((header: any, colIndex: any) => (
                     <TableCell
-                      key={`cell-${comp.num}-${header}-${colIndex}`}
+                      key={`cell-${comp.num}-${header}-${colIndex + 1}`}
                       className="p-1 border-x min-w-[140px]"
                     >
                       <ComparisonCell
-                        key={`cell-${comp.num}-${header}-${colIndex}`}
+                        key={`cell-${comp.num}-${header}-${colIndex + 1}`}
                         field={header}
-                        value={comparisons.getValue(comp.num, header)} // جلب القيمة هنا وتمريرها جاهزة
+                        value={comparisons.getValue(comp.num, header)}
                         onChange={(val) =>
-                          comparisons.updateCell(comp.num, header, val)
+                          comparisons.updateCellComparison(
+                            comp.num,
+                            header,
+                            val,
+                          )
                         }
                       />
                     </TableCell>
