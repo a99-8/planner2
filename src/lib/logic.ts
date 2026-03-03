@@ -1,4 +1,5 @@
 import Papa from "papaparse";
+import { useCallback } from "react";
 
 export async function parseCsvToColumnsStructure(file: File): Promise<{
   fileName: string;
@@ -54,11 +55,14 @@ export function generateRangeArray({
   start,
   end,
   step,
+  nums,
 }: {
   start: number;
   end: number;
   step: number;
+  nums: number[];
 }) {
+  if (start > end || step <= 0) return nums;
   let result = [];
   let current = start;
 
@@ -70,26 +74,12 @@ export function generateRangeArray({
   return result;
 }
 
-export const calculateMetrics = (values: any[], step: number) => {
-  const nums = ConvertingTextArrToNumberArr(values);
-  if (nums.length !== values.length) return { max: 0, min: 0, count: 0 };
-  const min = Math.min(...nums),
-    max = Math.max(...nums);
-  return {
-    min,
-    nums,
-    max,
-    count: step > 0 ? Math.ceil((max - min) / step) + 1 : 0,
-  };
-};
-
+// دالة حساب الوسيط المائل
 export const getAverage = (arr: any): number => {
   if (!arr || arr.length === 0) return 0;
 
   // 1. تحويل العناصر لأرقام حقيقية وتصفية أي قيم غير صالحة
-  const numericArr = arr
-    .map((item: any) => Number(item))
-    .filter((item: number) => !isNaN(item));
+  const numericArr = ConvertingTextArrToNumberArr(arr);
 
   // 2. الترتيب العددي الصحيح (a - b)
   const sorted = numericArr.sort((a: any, b: any) => a - b);
@@ -100,6 +90,7 @@ export const getAverage = (arr: any): number => {
   return sorted[midIndex];
 };
 
+// دالة حساب القيمة المناسبة
 export function getClosestFloor(
   value: number,
   array: number[],
@@ -117,6 +108,7 @@ export function getClosestFloor(
   );
 }
 
+// دالة انشاء الاعداد الاساسية للمجموعات
 export const makeGroupBase = (min: number, max: number): number[] => {
   // 1. التقريب حسب القواعد المطلوبة
   const getRoundedMin = (n: number) => {
@@ -167,8 +159,55 @@ export const makeGroupBase = (min: number, max: number): number[] => {
   return [...new Set(result)].filter((n) => n <= end).sort((a, b) => a - b);
 };
 
+// دالة تحويل مصفوفة النصوص لمصفوفة الارقام
 export const ConvertingTextArrToNumberArr = (arr: string[]) => {
   return arr
     .map((v: any) => parseFloat(String(v)))
     .filter((v: any) => !isNaN(v));
+};
+
+export const isDataValid = (arr: any) => {
+  if (!arr) return false;
+  return ConvertingTextArrToNumberArr(arr).length === arr.length;
+};
+
+export const createDefaultSettlement = (
+  columnName: string,
+  columnData: number[],
+) => {
+  return {
+    name: columnName,
+    header: columnData,
+    dataRow: {},
+    settings: {
+      baseGroup: 0,
+      minValue: columnData.length > 0 ? Math.min(...columnData) : 0,
+      maxValue: columnData.length > 0 ? Math.max(...columnData) : 0,
+      groupCount: 0,
+      baseSettlement: 0,
+      increment: 0,
+      average: 0,
+      incrementEvery: 0,
+    },
+  };
+};
+
+export const CalculatingValueBasedAtion = (
+  columnData: number[],
+  action: string,
+) => {
+  const sorted = [...columnData].sort((a, b) => a - b);
+  const sum = columnData.reduce((a, b) => a + b, 0);
+  const stats: any = {
+    min: Math.min(...columnData),
+    max: Math.max(...columnData),
+    avg: sum / (columnData.length || 1),
+    total: sum,
+    count: columnData.length,
+    mid:
+      sorted.length % 2 !== 0
+        ? sorted[Math.floor(sorted.length / 2)]
+        : (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2,
+  };
+  return stats[action];
 };

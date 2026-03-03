@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
-import { ProjectStructure } from "@/lib/projectStructure";
+import { ProjectStructure } from "@/lib/projectStructureAndTypes";
+import { produce } from "immer";
 
 export const projectService = {
   // 1. إنشاء أو تحديث مشروع كامل
@@ -32,11 +33,13 @@ export const projectService = {
   // 5. تحديث جزئي (مثلاً تحديث الـ landsTable فقط دون المساس بالباقي)
   async updateProjectSection(
     id: string,
-    sectionData: Partial<ProjectStructure>,
+    recipe: (draft: ProjectStructure) => void,
   ): Promise<void> {
     try {
+      const current = await db.projects.get(id); // اجلب النسخة الحالية
+      const nextState = produce(current, recipe); // طبّق التعديلات
       await db.projects.update(id, {
-        ...sectionData,
+        ...nextState,
         updatedAt: new Date(),
       });
     } catch (error) {

@@ -6,17 +6,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ProjectStructure } from "@/lib";
+import { ProjectStructure, sync } from "@/lib";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Trash2 } from "lucide-react";
-import { useProjectUpdate } from "@/hooks/useProjectMain";
-import { useLandsSection } from "@/hooks/useSections/useLandsSection";
+import { useLandsSection } from "@/hooks/useSections";
 
 export function LandsTable(project: ProjectStructure) {
   const hasData = project.hasData;
-  const update = useProjectUpdate(project.id, project);
-  const lands = useLandsSection(project, update);
+  const lands = useLandsSection(project);
+  const { get, set } = sync(project);
+  const tableData = get.LandsTableData() || {};
 
   return (
     <div className="border rounded-md overflow-x-auto w-full p-4 space-y-4">
@@ -36,12 +36,12 @@ export function LandsTable(project: ProjectStructure) {
         {hasData && (
           <>
             <Label className="bg-muted p-2 rounded border border-border">
-              {lands.fileName}
+              {project?.landsTable?.fileName || ""}
             </Label>
 
             <Button
               variant="destructive"
-              onClick={lands.clear}
+              onClick={set.clearLandsTable}
               className="gap-2"
             >
               <Trash2 size={16} />
@@ -56,7 +56,7 @@ export function LandsTable(project: ProjectStructure) {
         <Table dir="rtl">
           <TableHeader>
             <TableRow>
-              {Object.keys(lands.tableData).map((header) => (
+              {Object.keys(tableData).map((header) => (
                 <TableHead
                   key={header}
                   className="min-w-[120px] text-center font-bold"
@@ -68,18 +68,16 @@ export function LandsTable(project: ProjectStructure) {
           </TableHeader>
 
           <TableBody>
-            {Object.values(lands.tableData)[0].map((_, rowIndex) => (
+            {Object.values(tableData)[0].map((_, rowIndex) => (
               <TableRow key={rowIndex}>
-                {Object.entries(lands.tableData).map(
-                  ([columnName, columnValues]) => (
-                    <TableCell
-                      key={`${rowIndex}-${columnName}`}
-                      className="text-center"
-                    >
-                      {columnValues[rowIndex]}
-                    </TableCell>
-                  ),
-                )}
+                {Object.entries(tableData).map(([columnName, columnValues]) => (
+                  <TableCell
+                    key={`${rowIndex}-${columnName}`}
+                    className="text-center"
+                  >
+                    {columnValues[rowIndex]}
+                  </TableCell>
+                ))}
               </TableRow>
             ))}
           </TableBody>

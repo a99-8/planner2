@@ -1,3 +1,5 @@
+import { LucideIcon } from "lucide-react";
+
 export interface ProjectStructure {
   id: string;
   name: string;
@@ -55,20 +57,42 @@ export interface ProjectStructure {
     };
     rowData: {
       [key: number]: {
-        compweight: {
-          [key: number]: number;
-        };
+        [key: string]: number;
         totalAftarRound: number;
       };
     };
     compweight: {
       [key: number]: number;
     };
-    rowNum: Record<
-      number,
-      {
-        [key: number]: number;
-      }
-    >;
   };
+}
+
+type ControlButtonsProps = {
+  id: string;
+  name: string;
+  dis: string;
+  icon: LucideIcon;
+  onClick: () => void;
+  className: string;
+  placeholder?: string;
+};
+
+export interface Props extends Omit<ControlButtonsProps, "onClick"> {
+  onClick: (inputValue?: string) => void;
+  defaultValue?: string; // خاصية اختيارية للاسم القديم
+}
+
+export interface StatusHandlerProps {
+  type: "loading" | "noProject" | "noData" | "error" | "projectNotFound";
+  className?: string;
+  message?: string;
+}
+
+export interface updateSettingsProps {
+  settlement: string;
+  newHeader: any;
+  next: any;
+  nums: any;
+  step: number;
+  uniqueHeader: any;
 }

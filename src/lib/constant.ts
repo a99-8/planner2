@@ -9,17 +9,13 @@ export const ProjectControlButtons = [
     icon: PencilLine,
     className: "bg-yellow-600 hover:text-yellow-700 hover:border-yellow-700",
     placeholder: "الاسم الجديد",
-    hidden: "",
-    hover: true,
   },
   {
     id: "delet",
     name: "حذف المشروع",
     dis: "هل انت متأكد من حذف هذا المشروع ؟",
     icon: Trash,
-    className: "bg-red-600  hover:text-red-700 hover:border-red-700",
-    hidden: "hidden",
-    hover: true,
+    className: "bg-red-600 hover:text-red-700 hover:border-red-700",
   },
 ];
 
@@ -32,8 +28,6 @@ export const GlobalControlButtons = [
     icon: FilePlus,
     className: "bg-blue-600 hover:text-blue-700 hover:border-blue-700",
     placeholder: "الاسم",
-    hidden: "",
-    hover: false,
   },
   {
     id: "deletAllProjects",
@@ -42,8 +36,6 @@ export const GlobalControlButtons = [
     icon: BadgeX,
     className: "bg-red-600  hover:text-red-700 hover:border-red-700",
     placeholder: "حذف جميع المشاريع",
-    hidden: "",
-    hover: false,
   },
 ];
 
@@ -131,6 +123,16 @@ export const mainHeaders = [
     label: "التحكم في المشروع",
     colSpan: 4,
   },
+];
+
+export const actionsList = [
+  "min",
+  "max",
+  "avg",
+  "mid",
+  "count",
+  "total",
+  "dependences",
 ];
 
 // اوامر رفع المشروع

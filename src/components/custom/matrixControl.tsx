@@ -21,8 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Zap, Settings2, SlidersHorizontal } from "lucide-react";
 import { makeGroupBase, ProjectStructure } from "@/lib";
-import { useProjectUpdate } from "@/hooks/useProjectMain";
-import { useMatrixSection } from "@/hooks/useSections/useMatrixSection";
+import { useMatrixSection } from "@/hooks/useSections";
 
 export function MatrixControl({
   project,
@@ -31,8 +30,7 @@ export function MatrixControl({
   project: ProjectStructure;
   settlement: string;
 }) {
-  const update = useProjectUpdate(project.id, project);
-  const matrixdata = useMatrixSection(project, update);
+  const matrixdata = useMatrixSection(project);
   const data = matrixdata(settlement);
 
   if (!data) return null;

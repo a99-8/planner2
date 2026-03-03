@@ -1,14 +1,8 @@
 import { Loader2, FolderPlus, Database } from "lucide-react";
-import { cn } from "@/lib/index";
-import { FileQuestion, Home, ArrowLeft } from "lucide-react";
+import { StatusHandlerProps, cn } from "@/lib";
+import { FileQuestion, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-
-export interface StatusHandlerProps {
-  type: "loading" | "noProject" | "noData" | "error" | "projectNotFound";
-  className?: string;
-  message?: string;
-}
 
 const StatusHandler = ({ type, className, message }: StatusHandlerProps) => {
   return (

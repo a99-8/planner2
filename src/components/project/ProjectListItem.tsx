@@ -5,11 +5,7 @@ import { useProjects } from "@/hooks/useProjectMain";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
-import {
-  formadDate,
-  ProjectControlButtons,
-  ProjectStructure,
-} from "@/lib/index";
+import { formadDate, ProjectControlButtons, ProjectStructure } from "@/lib";
 
 const ProjectListItem = ({ name, id, updatedAt }: ProjectStructure) => {
   const { handleAction } = useProjects();

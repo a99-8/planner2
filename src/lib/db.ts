@@ -1,5 +1,5 @@
 import Dexie, { Table } from "dexie";
-import { ProjectStructure } from "@/lib/projectStructure";
+import { ProjectStructure } from "@/lib/projectStructureAndTypes";
 
 export class MyDatabase extends Dexie {
   projects!: Table<ProjectStructure>;

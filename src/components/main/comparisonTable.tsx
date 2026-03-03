@@ -11,14 +11,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Trash2, Plus, ArrowUpDown } from "lucide-react";
 import { ComparisonCell } from "../custom/comparisonCell";
-import { ProjectStructure } from "@/lib";
-import { useProjectUpdate } from "@/hooks/useProjectMain";
-import { useComparisonsSection } from "@/hooks/useSections/useComparisonsSection";
+import { ProjectStructure, sync } from "@/lib";
 
 export function ComparisonTable(project: ProjectStructure) {
-  const update = useProjectUpdate(project.id, project);
-  const comparisons = useComparisonsSection(project, update);
-
+  const { get, set } = sync(project);
+  const comps = get.comparisons();
+  const headers = project?.comparisons?.header || [];
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -27,11 +25,11 @@ export function ComparisonTable(project: ProjectStructure) {
           <div className="flex items-center gap-2 text-muted-foreground">
             <ArrowUpDown className="w-4 h-4" />
             <span className="text-sm font-medium">
-              عدد المقارنات: {comparisons.count}
+              عدد المقارنات: {comps.length}
             </span>
           </div>
           <Button
-            onClick={comparisons.add}
+            onClick={set.addComparison}
             size="sm"
             variant={"ghost"}
             className="gap-2 hover:border-2 hover:shadow-none shadow-md transition-all active:scale-[0.98]"
@@ -46,7 +44,7 @@ export function ComparisonTable(project: ProjectStructure) {
             <TableHeader className="bg-secondary/30">
               <TableRow>
                 <TableHead className="w-16 text-center border-l">م</TableHead>
-                {comparisons.headers.map((header: any, index: any) => (
+                {headers.map((header: any, index: any) => (
                   <TableHead
                     key={`head-${header}-${index}`}
                     className="text-center border-x"
@@ -60,7 +58,7 @@ export function ComparisonTable(project: ProjectStructure) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {comparisons.data.map((comp: any) => (
+              {comps.map((comp: any) => (
                 <TableRow
                   key={`row-${comp.num}`}
                   className="group hover:bg-muted/30 transition-colors"
@@ -71,7 +69,7 @@ export function ComparisonTable(project: ProjectStructure) {
                   </TableCell>
 
                   {/* خلايا البيانات */}
-                  {comparisons.headers.map((header: any, colIndex: any) => (
+                  {headers.map((header: any, colIndex: any) => (
                     <TableCell
                       key={`cell-${comp.num}-${header}-${colIndex + 1}`}
                       className="p-1 border-x min-w-[140px]"
@@ -79,13 +77,9 @@ export function ComparisonTable(project: ProjectStructure) {
                       <ComparisonCell
                         key={`cell-${comp.num}-${header}-${colIndex + 1}`}
                         field={header}
-                        value={comparisons.getValue(comp.num, header)}
+                        value={get.ComparisonsValue(comp.num, header)}
                         onChange={(val) =>
-                          comparisons.updateCellComparison(
-                            comp.num,
-                            header,
-                            val,
-                          )
+                          set.ComparisonsValue(comp.num, header, val)
                         }
                       />
                     </TableCell>
@@ -97,7 +91,7 @@ export function ComparisonTable(project: ProjectStructure) {
                       variant="destructive"
                       size="icon"
                       className="hover:bg-destructive/10 hover:text-destructive"
-                      onClick={() => comparisons.delete(comp.num)}
+                      onClick={() => set.deleteComparison(comp.num)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -109,7 +103,7 @@ export function ComparisonTable(project: ProjectStructure) {
         </div>
 
         {/* رسالة في حال عدم وجود بيانات */}
-        {comparisons.count === 0 && (
+        {comps.length === 0 && (
           <div className="text-center p-8 border border-dashed rounded-lg text-muted-foreground">
             لا توجد مقارنات مضافة حالياً. اضغط على "إضافة مقارنة" للبدء.
           </div>

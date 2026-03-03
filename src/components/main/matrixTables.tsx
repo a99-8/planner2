@@ -19,15 +19,14 @@ import { Input } from "@/components/ui/input";
 import StatusHandler from "@/components/custom/StatusHandler";
 import { Calculator, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { ProjectStructure } from "@/lib";
-import { useMatrixSection } from "@/hooks/useSections/useMatrixSection";
-import { useProjectUpdate } from "@/hooks/useProjectMain";
+import { ProjectStructure, sync } from "@/lib";
+import { useMatrixSection } from "@/hooks/useSections";
 
 export function MatrixTables(project: ProjectStructure) {
   const hasData = project.hasData;
   const settlements = project.control?.settlements || [];
-  const update = useProjectUpdate(project.id, project);
-  const matrixdata = useMatrixSection(project, update);
+  const matrixdata = useMatrixSection(project);
+  const { get, set } = sync(project);
   if (!hasData) {
     return <StatusHandler type="noData" />;
   }
@@ -37,7 +36,7 @@ export function MatrixTables(project: ProjectStructure) {
         const data = matrixdata(settlement);
         if (!data) return null;
 
-        const { frRow, frCol, matrixActions, average, isInterpolated } = data;
+        const { frRow, frCol, average, isInterpolated } = data;
 
         return (
           <AccordionItem
@@ -119,12 +118,16 @@ export function MatrixTables(project: ProjectStructure) {
                                       : "font-medium"
                                   }`}
                                   placeholder="0"
-                                  value={matrixActions.getValue(
+                                  value={get.matrixCell(
+                                    project?.matrix?.settlementsTable?.[
+                                      settlement
+                                    ],
                                     valueLands,
                                     setInputId,
                                   )}
                                   onChange={(e) =>
-                                    matrixActions.updateCellMatrix(
+                                    set.matrixCell(
+                                      settlement,
                                       valueLands,
                                       setInputId,
                                       e.target.value,

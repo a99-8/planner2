@@ -71,7 +71,6 @@ export const useProjects = () => {
               totalfordependences: {},
               rowData: {},
               compweight: {},
-              rowNum: {},
             },
           };
           return await projectService.saveProject(newProject);
@@ -82,9 +81,12 @@ export const useProjects = () => {
         })
         .with("rename", async () => {
           if (!projectId || !val) return;
-          return await projectService.updateProjectSection(projectId, {
-            name: val,
-          });
+          return await projectService.updateProjectSection(
+            projectId,
+            (draft) => {
+              draft.name = val;
+            },
+          );
         })
         .with("deletAllProjects", async () => {
           if (val === "حذف جميع المشاريع")
@@ -98,22 +100,4 @@ export const useProjects = () => {
   };
 
   return { projects: projects || [], isLoading, handleAction };
-};
-
-export const useProjectUpdate = (
-  projectId: string,
-  project: ProjectStructure,
-) => {
-  return useCallback(
-    async (recipe: (draft: ProjectStructure) => void) => {
-      if (!project) return null;
-
-      const nextState = produce(project, recipe);
-
-      return await projectService.updateProjectSection(projectId, {
-        ...nextState,
-      });
-    },
-    [projectId, project],
-  );
 };

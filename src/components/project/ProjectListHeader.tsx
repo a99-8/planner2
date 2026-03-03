@@ -2,7 +2,7 @@
 
 import ControlButtons from "@/components/custom/controlButtons";
 import { useProjects } from "@/hooks/useProjectMain";
-import { GlobalControlButtons } from "@/lib/index";
+import { GlobalControlButtons } from "@/lib";
 
 export default function ProjectListIHaeder() {
   const { handleAction } = useProjects();

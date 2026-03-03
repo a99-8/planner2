@@ -13,7 +13,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, Props } from "@/lib";
 import { Input } from "@/components/ui/input";
 import {
   Tooltip,
@@ -21,34 +21,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { LucideIcon } from "lucide-react";
-
-export type ControlButtonsProps = {
-  id: string;
-  name: string;
-  dis: string;
-  icon: LucideIcon;
-  onClick: () => void;
-  className: string;
-  hidden: string;
-  placeholder?: string;
-};
-
-interface Props extends Omit<ControlButtonsProps, "onClick"> {
-  onClick: (inputValue?: string) => void;
-  hover: boolean;
-  defaultValue?: string; // خاصية اختيارية للاسم القديم
-}
 
 const ControlButtons = ({
+  id,
   name,
   dis,
   icon: Icon,
   onClick,
   className,
   placeholder,
-  hidden,
-  hover,
   defaultValue = "",
 }: Props) => {
   const [inputValue, setInputValue] = useState(defaultValue);
@@ -56,6 +37,8 @@ const ControlButtons = ({
   useEffect(() => {
     setInputValue(defaultValue);
   }, [defaultValue]);
+
+  const hover = id === "rename" || id === "delet";
 
   return (
     <TooltipProvider>
@@ -95,7 +78,7 @@ const ControlButtons = ({
             <AlertDialogTitle>{name}</AlertDialogTitle>
             <AlertDialogDescription>{dis}</AlertDialogDescription>
 
-            {hidden !== "hidden" && (
+            {id !== "delet" && (
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
